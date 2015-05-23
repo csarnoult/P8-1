@@ -5,9 +5,7 @@
 
 #include "p8.h"
 
-int
-main( int argc,char **argv )
-{
+int main( int argc,char **argv ) {
 	void parse( void ),scan( void );
 
 	if ( (argc < 2) || (3 < argc) ) {
@@ -36,75 +34,62 @@ main( int argc,char **argv )
 	}
 	return( 0 );
 }
-long double
-atold( char *a )
-{
+
+long double atold( char *a ) {
 	long double tento( int );
 
 	long double y;
 	int n,p,s;
 }
-void
-baddigitstr( char *t )
-{
+
+void baddigitstr( char *t ) {
 }
-void
-closeout( void )
-{
+
+void closeout( void ) {
 	void makename( char *,char *,char * );
 
 	int i;
 	char fasm[13];
 }
-int
-comp( int s,int *p )
-{
-}    
-void
-delimiter( void )
-{
+
+int comp( int s,int *p ) {
 }
-void
-emit0( int n )
-{
+
+void delimiter( void ) {
 }
-void
-emit1( int i )
-{
+
+void emit0( int n ) {
 }
-void
-emit2( int i,int j )
-{
+
+void emit1( int i ) {
+}
+
+void emit2( int i,int j ) {
 	void emit0( int );
 }
-void
-emit3( int i,int j,int k )
-{
+
+void emit3( int i,int j,int k ) {
 	void emit0( int );
 }
-void
-extradot( int d,char *t )
-{
+
+void extradot( int d,char *t ) {
 }
-void
-floatstr( char *t )
-{
+
+void floatstr( char *t ) {
 	long double atold( char * );
 
 	double x;
 	int i;
 }
-void
-gencode( void )
-{
+
+void gencode( void ) {
 	int nextr( void );
 	void emit1( int ),emit2( int,int ),emit3( int,int,int );
 
 	int l,r;
 }
-void
-getsymbol( void )
-{
+
+void getsymbol( void ) {
 }
 //
 //	If string s is new, return -(hash+1)
@@ -113,58 +98,46 @@ getsymbol( void )
 //		if return value y < 0, then hash = -(y+1)
 //				       else hash = y.
 //
-int
-hash( char *s )
-{
+int hash( char *s ) {
 	int h,q;
 	char *p;
 }
-void
-illegalch( void )
-{
+
+void illegalch( void ) {
 }
-void
-initparse( void )
-{
+
+void initparse( void ) {
 	int r;
 }
 
-
-void
-initscan( void )
-{
+void initscan( void ) {
 	int hash( char * );
 
 	int h,i;
 }
-void
-intstr( char *t )
-{
+
+void intstr( char *t ) {
 	long atol( char * );
 
 	long x;
 	int i;
 }
-void
-letterstr( char *t )
-{
+
+void letterstr( char *t ) {
 	int hash( char * );
 
 	int h,i;
 	char *p;
 }
-void
-makename( char *p,char *q,char *r )
-{
+
+void makename( char *p,char *q,char *r ) {
 }
-void
-match( void )
-{
+
+void match( void ) {
 	void gencode( void );
 }
-int
-nextr( void )
-{
+
+int nextr( void ) {
 	int r;
 }
 //
@@ -179,53 +152,39 @@ nextr( void )
 //		6 : real
 //	  7,8,... : too many dots (st-5 dots)
 //
-int
-nexts( char *s,char *t )
-{
+int nexts( char *s,char *t ) {
 	int ch2,e,st;
 	static char *p;
 }
-void
-ouch( int c )
-{
+
+void ouch( int c ) {
 	putchar( c );
 }
 
-
-
-
-
-
-void
-outscan( void )
-{
+void outscan( void ) {
 	void makename( char *,char *,char * ),ouch( int );
 
 	int c,i,j,k;
 	char fsym[13];
 }
-void
-parse( void )
-{
+
+void parse( void ) {
 	void closeout( void ),getsymbol( void ),initparse( void ),
 		reduce( void ),reportbug( void ),shift( void );
 }
-void
-reduce( void )
-{
+
+void reduce( void ) {
 	int comp( int,int * );
 	void match( void );
 }
-void
-reportbug( void )
-{
+
+void reportbug( void ) {
 	void ouch( int );
 
 	int i,j,k;
 }
-void
-scan( void )
-{
+
+void scan( void ) {
 	int nexts( char *,char * );
 	void baddigitstr( char * ),delimiter( void ),extradot( int,char * ),
 		floatstr( char * ),illegalch( void ),initscan( void ),
@@ -234,12 +193,10 @@ scan( void )
 	int st;
 	char s[MAXL+1],t[MAXL+1];
 }
-void
-shift( void )
-{
+
+void shift( void ) {
 }
-long double
-tento( int n )
-{
+
+long double tento( int n ) {
 	long double y,z;
 }
