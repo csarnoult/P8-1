@@ -147,9 +147,22 @@ void initscan( void ) {
 
 void intstr( char *t ) {
 	long atol( char * );
-
 	long x;
 	int i;
+    
+    x = atol(t);
+    for (i = 0; i < nilit; i++) {
+        if (x == ilit[i]) {
+            lsymb = symbol[nsymb++] = 250+i;
+            return;
+        }
+    }
+    if (50 <= nilit) {
+        puts("** too mamny int literals **");
+        exit(1);
+    }
+    ilit[nilit++] = x;
+    lsymb = symbol[nsymb++] = 249+nilit;
 }
 
 void letterstr( char *t ) {
