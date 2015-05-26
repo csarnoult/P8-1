@@ -55,6 +55,7 @@ void closeout( void ) {
 int comp( int s,int *p ) {
 }
 
+//Worked on by Chris Arnoult
 void delimiter( void ) {
     lsymb = symbol[nsymb++] = 350+(int)delim[(int)ch & 0x00ff];
     if (ch == ';') {
@@ -81,9 +82,29 @@ void extradot( int d,char *t ) {
 
 void floatstr( char *t ) {
 	long double atold( char * );
-
 	double x;
 	int i;
+    
+    if (!isdigit(*(t+strlen(t)-1))) {
+        fprintf(fpe,e2,line,t);
+        nerr++;
+        lsymb = symbol[nsymb++] = 0;
+        return;
+    }
+    x = atold(t);
+    for (i = 0; i < nrlit; i++) {
+        if (x == rlit[i]) {
+            lsymb = symbol[nsymb++] = 200+i;
+            return;
+        }
+        continue;
+    }
+    if (50 <= nrlit) {
+        puts("** too many real literals **");
+        exit(1);
+    }
+    rlit[nrlit++] = x;
+    lsymb = symbol[nsymb++] = 199+nrlit;
 }
 
 void gencode( void ) {
