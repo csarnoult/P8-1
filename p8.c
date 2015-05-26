@@ -55,7 +55,7 @@ void closeout( void ) {
 int comp( int s,int *p ) {
 }
 
-//Worked on by Chris Arnoult
+//Completed by Chris Arnoult
 void delimiter( void ) {
     lsymb = symbol[nsymb++] = 350+(int)delim[(int)ch & 0x00ff];
     if (ch == ';') {
@@ -80,6 +80,7 @@ void emit3( int i,int j,int k ) {
 void extradot( int d,char *t ) {
 }
 
+//Completed by Chris Arnoult
 void floatstr( char *t ) {
 	long double atold( char * );
 	double x;
@@ -127,7 +128,11 @@ int hash( char *s ) {
 	char *p;
 }
 
+//Completed by Chris Arnoult
 void illegalch( void ) {
+    fprintf(fpe,e1,line,ch);
+    nerr++;
+    lsymb = symbol[nsymb++] = 0;
 }
 
 void initparse( void ) {
