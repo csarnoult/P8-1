@@ -56,6 +56,10 @@ int comp( int s,int *p ) {
 }
 
 void delimiter( void ) {
+    lsymb = symbol[nsymb++] = 350+(int)delim[(int)ch & 0x00ff];
+    if (ch == ';') {
+        lrw = 0;
+    }
 }
 
 void emit0( int n ) {
