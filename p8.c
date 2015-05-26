@@ -97,7 +97,6 @@ void floatstr( char *t ) {
             lsymb = symbol[nsymb++] = 200+i;
             return;
         }
-        continue;
     }
     if (50 <= nrlit) {
         puts("** too many real literals **");
