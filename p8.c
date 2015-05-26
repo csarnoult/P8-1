@@ -145,6 +145,7 @@ void initscan( void ) {
 	int h,i;
 }
 
+//Completed by Chris Arnoult
 void intstr( char *t ) {
 	long atol( char * );
 	long x;
@@ -165,11 +166,58 @@ void intstr( char *t ) {
     lsymb = symbol[nsymb++] = 249+nilit;
 }
 
+//Completed by Chris Arnoult
 void letterstr( char *t ) {
 	int hash( char * );
-
 	int h,i;
 	char *p;
+    
+    h = hash(t);
+    
+    //old string
+    if (0 <= h) {
+        i = hashp[h].icod;
+        if (i == 0) {
+            fprintf(fpe, e4, line, t);
+            nerr++;
+        }
+        if ((i < 200) && ((lrw == 300) || (lrw == 301))) {
+            fprintf(fpe, e4, line, t);
+            nerr++;
+        }
+        if (300 <= i) {
+            lrw = i;
+        }
+        lsymb = symbol[nsymb++] = i;
+    }
+    
+    //new string
+    if (ssp1 <= ssp+strlen(t)) {
+        puts("** out of string space **");
+        unlink("$$err$$");
+        fclose(fps);
+        exit(1);
+    }
+    
+    h = -(h+1);
+    hashp[h].ptss = ssp;
+    p = t;
+    
+    //copy to sspace
+    while ((*ssp++ = *p++) != EOS) {}
+    if (lrw == 300) {
+        var[nrvar] = hashp[h].ptss;
+        lsymb = symbol[nsymb++] = hashp[h].icod = 100+(nrvar++);
+        return;
+    }
+    if (lrw == 301) {
+        var[50+nivar] = hashp[h].ptss;
+        lsymb = symbol[nsymb++] = hashp[h].icod = 150+(nivar++);
+        return;
+    }
+    fprintf(fpe, e4, line, t);
+    nerr++;
+    lsymb = symbol[nsymb++] = hashp[h].icod = 0;
 }
 
 void makename( char *p,char *q,char *r ) {
