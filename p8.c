@@ -36,13 +36,45 @@ int main( int argc,char **argv ) {
 }
 
 long double atold( char *a ) {
-	long double tento( int );
-
-	long double y;
-	int n,p,s;
+    long double tento( int );
+    long double y;
+    int n,p,s;
+    
+    y = (long double) 0;
+    n = p = s = 0;
+    
+    while (*a == ' ' || *a == '\t') {
+        a++;
+    }
+    if (*a == '-') {
+        a++;
+        s++;
+    }
+    
+    while (isdigit( *a )) {
+        y = (long double) 10 * y + (long double)((*a++) - '0');
+    }
+    
+    if (*a == '.') {
+        a++;
+        while (isdigit( *a )) {
+            p++;
+            y = (long double) 10 * y + (long double)((*a++) - '0');
+        }
+    }
+    
+    if ((*a == 'e') || (*a == 'E')) {
+        n = atoi( ++a );
+    }
+    y = y * tento( n - p );
+    
+    return (s ? -y : y);
 }
 
 void baddigitstr( char *t ) {
+    fprintf(fpe, e2, line, t);
+    nerr++;
+    lsymb = symbol[nsymb++] = 0;
 }
 
 void closeout( void ) {
@@ -51,6 +83,8 @@ void closeout( void ) {
 	int i;
 	char fasm[13];
 }
+
+
 
 int comp( int s,int *p ) {
 }
@@ -78,6 +112,9 @@ void emit3( int i,int j,int k ) {
 }
 
 void extradot( int d,char *t ) {
+    printf(fpe, e0, line, d, t );
+    nerr++;
+    lsymb= symbol[nsymb++] = 0;
 }
 
 //Completed by Chris Arnoult
@@ -124,8 +161,32 @@ void getsymbol( void ) {
 //				       else hash = y.
 //
 int hash( char *s ) {
-	int h,q;
-	char *p;
+    int h,q;
+    char *p;
+    
+    for (p = s, q = 0; *p; q = q+(int)*p, p++);
+    
+    h = (q % HSIZE) - 1;
+    
+    for (q = 0; ;) {
+        
+        if (HSIZE <= ++h) {
+            h = 0;
+        }
+        
+        if (hashp[h].ptss == (char *)NULL) {
+            return ( -(h+1));
+        }
+        
+        if (strcmp( s, hashp[p].ptss) == 0) {
+            return h;
+        }
+        
+        if (HSIZE <= ++q) {
+            puts("** hash table overflow **");
+            exit(1);
+        }
+    }
 }
 
 //Completed by Chris Arnoult
@@ -140,9 +201,12 @@ void initparse( void ) {
 }
 
 void initscan( void ) {
-	int hash( char * );
-
-	int h,i;
+    int hash( char * );
+    int h,i;
+    
+    ch = NEWL;
+    line = nerr = nilit = nilit = nivar = nrlit = nrvar = nsymb = 0;
+    hashp = (HASHREC *)malloc( HSIZE * sizeof(HASHREC));
 }
 
 //Completed by Chris Arnoult
