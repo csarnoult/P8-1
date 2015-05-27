@@ -90,6 +90,56 @@ void closeout( void ) {
 
 	int i;
 	char fasm[13];
+    
+    fputs( "\tret\n_main\tendp\ntext\tends\n_data\tsegment\tword public 'data'\n", fpc );
+    
+    for (i = 0; i < nrlit; i++) {
+        fprintf( fpc, "c%.2d\treal10\t%21.14e\n", i, (double)rlit[i] );
+    }
+    
+    for (i = 0; i < nilit; i++) {
+        fprintf( fpc, "c%.2d\tdd\t%ld\n", 50+i, ilit[i] );
+    }
+    
+    for (i = 0; i < nrvar; i++) {
+        fprintf( fpc, "v%.2d\treal10\t0.0\t;%-s\n", i, var[i] );
+    }
+    
+    for (i = 0; i < nivar; i++) {
+        fprintf( fpc, "v%.2d\tdd\t0\t;%-s\n", 50+i, var[50+i] );
+    }
+    
+    fputs( "_data\tends\nstack\tsegment\tstack\n\tdw\t100h dup(?)\nstack\tends\n", fpc );
+    
+    if (inf) {
+        fputs("\textern\t_inf:near\n", fpc);
+    }
+    
+    if (ini) {
+        fputs("\textern\t_ini:near\n", fpc);
+    }
+    
+    if (ouf) {
+        fputs("\textern\t_ouf:near\n", fpc);
+    }
+    
+    if (oui) {
+        fputs("\textern\t_oui:near\n", fpc);
+    }
+    
+    fputs( "\tend\n", fpc );
+    
+    if (fclose( fpc )) {
+        printf("** can't close %s **\n", fcode);
+        exit(1);
+    }
+    
+    makename( fname, "asm", fasm);
+
+    if (fopen( fasm, "rt" ) != (FILE *)NULL) {
+        unlink(fasm);
+    }
+    rename(fcode, fasm);
 }
 
 int comp( int s,int *p ) {
@@ -482,4 +532,20 @@ void shift( void ) {
 
 long double tento( int n ) {
 	long double y,z;
+    
+    if (n < 0) {
+        return (long double) 1 / tento(-n);
+    } else {
+        z = (long double)10;
+        y = (n & 1 ? z : (long double)1);
+        
+        for (; a >>= 1;) {
+            z = z*z;
+            if (n & 1) {
+                y = y * z;
+            }
+        }
+        
+        return y;
+    }
 }
