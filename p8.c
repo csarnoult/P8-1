@@ -139,6 +139,7 @@ void closeout( void ) {
     if (fopen( fasm, "rt" ) != (FILE *)NULL) {
         unlink(fasm);
     }
+    
     rename(fcode, fasm);
 }
 
@@ -154,17 +155,35 @@ void delimiter( void ) {
 }
 
 void emit0( int n ) {
+    if (n < 100) {
+        fprintf( fpc, "%s", reg[n] );
+    } else {
+        if (n < 200) {
+            fprintf( fpc, "v%.2d", n-100 );
+        } else {
+            fprintf( fpc, "c%.2d", n-200 );
+        }
+    }
 }
 
 void emit1( int i ) {
+    fprintf( fpc, "\t%s\n", inst[i] );
 }
 
-void emit2( int i,int j ) {
+void emit2( int i, int j ) {
 	void emit0( int );
+    fprintf( fpc, "\t%s\t", inst[i] );
+    emit0(j);
+    fputs( "\n", fpc );
 }
 
-void emit3( int i,int j,int k ) {
+void emit3( int i, int j, int k ) {
 	void emit0( int );
+    fprintf( fpc, "\t%s\t", inst[i] );
+    emit0(j);
+    fputs( ",", fpc );
+    emit0(k);
+    fputs( "\n", fpc );
 }
 
 void extradot( int d,char *t ) {
