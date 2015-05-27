@@ -4,8 +4,8 @@
  *  Course:     CS-4110 (Compiler Design)
  *  Project:    p1
  *
- *  Start Date: 21 April 2015
- *  Last Edit:  19 May 2015
+ *  Start Date: 19 May 2015
+ *  Last Edit:  26 May 2015
  * ======================================================
  * Project Description:
  * ------------------------------------------------------
@@ -91,8 +91,6 @@ void closeout( void ) {
 	int i;
 	char fasm[13];
 }
-
-
 
 int comp( int s,int *p ) {
 }
@@ -215,6 +213,30 @@ void initscan( void ) {
     ch = NEWL;
     line = nerr = nilit = nilit = nivar = nrlit = nrvar = nsymb = 0;
     hashp = (HASHREC *)malloc( HSIZE * sizeof(HASHREC));
+    
+    if (hashp == (HASHREC*)NULL) {
+        puts("** can't allocate hash table **");
+        exit( 1 );
+    }
+    
+    ssp = (char *)malloc( SSIZE );
+    
+    if (ssp == (char *)NULL) {
+        puts("** can't allocate string space **");
+        exit( 1 );
+    }
+    
+    ssp1 = ssp + SSIZE;
+    
+    for (i = 0; i < HSIZE; i++) {
+        hashp[i].ptss = (char *)NULL;
+    }
+    
+    for (i = 0; i < sizeof(trw) / sizeof( char *); i++) {
+        h = -hash(trw[i] + 1);
+        hashp[h].ptss = trw[i];
+        hashp[h].icod = 300 + i;
+    }
 }
 
 //Completed by Chris Arnoult
@@ -235,7 +257,7 @@ void intstr( char *t ) {
         exit(1);
     }
     ilit[nilit++] = x;
-    lsymb = symbol[nsymb++] = 249+nilit;
+    lsymb = symbol[nsymb++] = 249 + nilit;
 }
 
 //Completed by Chris Arnoult
@@ -293,6 +315,18 @@ void letterstr( char *t ) {
 }
 
 void makename( char *p,char *q,char *r ) {
+    
+    for (; *p && *p++;) {
+        *r++ = *p++;
+    }
+    
+    *r++ = '.';
+    
+    for (; *q;) {
+        *r++ = *q++;
+    }
+    
+    *r = EOS;    
 }
 
 void match( void ) {
