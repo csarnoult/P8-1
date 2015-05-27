@@ -1,7 +1,15 @@
-//	p8.org		1996 apr 21	last modified 1998 jun 01
-//
-//	Shows organization of dan's p8.c.
-//
+/*  Authors:    Nicholas Rebhun
+ *              Chris Arnoult
+ *
+ *  Course:     CS-4110 (Compiler Design)
+ *  Project:    p1
+ *
+ *  Start Date: 21 April 2015
+ *  Last Edit:  19 May 2015
+ * ======================================================
+ * Project Description:
+ * ------------------------------------------------------
+ ********************************************************/
 
 #include "p8.h"
 
