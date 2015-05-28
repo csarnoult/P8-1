@@ -851,7 +851,7 @@ int hash( char *s ) {
             return ( -(h+1));
         }
         
-        if (strcmp( s, hashp[p].ptss) == 0) {
+        if ( strcmp(s, hashp[h].ptss) == 0) {
             return h;
         }
         
@@ -871,6 +871,25 @@ void illegalch( void ) {
 
 void initparse( void ) {
 	int r;
+    
+    if ( (fpc = fopen( fcode, "wt" )) == (FILE *)NULL ) {
+        printf( "** can't close %s **\n", fcode);
+        exit( 1 );
+    }
+    
+    fputs( "\t.386\n\t.model\tflat,stdcall\n\t.code\nmain\tproc\n", fpc);
+    
+    if ( nrvar || nrlit ) {
+        fputs( "\tfinit\n", fpc );
+    }
+    
+    isymb = label = maxtop = top = -1;
+    inf = ini = ouf = oui = bug = eos = sd = 0;     // removed char cast. if bugs occur, look here
+    
+    bstop = brk-1;
+    for (r = 0; r < 6; r++) {
+        rbu[r] = (char)0;
+    }
 }
 
 void initscan( void ) {
@@ -1047,7 +1066,7 @@ void outscan( void ) {
     
     if ( sopt ) {
         makename( fname, "sym", fsym);
-        if (fps = fopen( fsym, "wt")) == (FILE *)NULL) {
+        if (fps = fopen( fsym, "wt") == (FILE *)NULL) {
             printf( "** can't open %s**", fsym );
             exit( 1 );
         }
@@ -1085,7 +1104,7 @@ void outscan( void ) {
         
         if (nerr) {
             fprintf( fps, "\n\n%d error%sdetected in scan\n\n", nerr, (nerr < 2 ? " " : "s ") );
-            while (c = getc( fpe )) != EOF ) {
+            while (c = getc( fpe ) != EOF ) {
                 fputc( c, fps );
             }
             fclose( fpe );
@@ -1097,7 +1116,7 @@ void outscan( void ) {
         for (i = 0; i < nsymb; i++) {
             k = symbol[i];
             if (400 < k) {
-                fprintf( fps, "\n%6d", k )
+                fprintf( fps, "\n%6d", k );
                 j = 0;
             } else {
                 if (SYMLIN < ++j) {
@@ -1120,11 +1139,76 @@ void outscan( void ) {
 void parse( void ) {
 	void closeout( void ),getsymbol( void ),initparse( void ),
 		reduce( void ),reportbug( void ),shift( void );
+    initparse();
+    getsymbol();
+    
+    if (alpha != 350) {         // not start with '{'
+        bug = 3;
+        reportbug();
+        return;
+    }
+    
+    shift();
+    getsymbol();
+    
+    do {
+        if (eos) {
+            if ( (top == 0 ) && (sigma == 400) ){
+                break;
+            } else {
+                reduce();
+            }
+        } else {
+            switch ( (int)c1[c1i][c1j] ) {
+                case 0:
+                    shift();
+                    getsymbol();
+                    break;
+                
+                case 1:
+                    reduce();
+                    break;
+                default:
+                    bug = 10 + (int)c1[c1i][c1j];
+            }
+        }
+        
+    } while (!bug);
+    
+    if (bug) {
+        reportbug();
+    } else {
+        closeout();
+    }
 }
 
 void reduce( void ) {
 	int comp( int,int * );
 	void match( void );
+    
+    row = first[c1i];
+    
+    if (row < 3) {
+        while (1) {
+            if ( (bug = comp( top, c2+c2ptr[row] )) < 2 ) {
+                break;
+            }
+            
+            if (same[++row] != sigma) {
+                bug = 2;
+                break;
+            }
+            
+            if ( (row == 16) && (symbol[top-1]!= 403) ) {
+                row++;
+            }
+        }
+    }
+    
+    if (bug == 0) {
+        match();
+    }
+    
 }
 
 void reportbug( void ) {
@@ -1144,7 +1228,27 @@ void scan( void ) {
 }
 
 void shift( void ) {
+    if (maxtop < ++top) {
+        maxtop = top;
+    }
+   
+    sigma = (300 <= alpha ? alpha : 100 * (alpha/100) );
+    symbol[top] = sigma;
     
+    if (300 <= alpha) {
+        mode[top] = (char)(aux[top] = 0);
+    } else {
+        aux[top] = alpha;
+        mode[top] = (char)(((alpha-sigma) < 50) + 1);
+    }
+    
+    if (alpha == 306) {
+        fprintf( fpc, "_%d:\n", ++label );
+        aux[top] = label;
+    }
+    
+    c1i = c1j;
+    eline = line;
 }
 
 long double tento( int n ) {
@@ -1156,7 +1260,7 @@ long double tento( int n ) {
         z = (long double)10;
         y = (n & 1 ? z : (long double)1);
         
-        for (; a >>= 1;) {
+        for (; n >>= 1;) {
             z = z*z;
             if (n & 1) {
                 y = y * z;
