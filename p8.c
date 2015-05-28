@@ -242,9 +242,73 @@ int nextr( void ) {
 //		6 : real
 //	  7,8,... : too many dots (st-5 dots)
 //
+
+//Completed by Chris Arnoult (This could have errors)
 int nexts( char *s,char *t ) {
 	int ch2,e,st;
 	static char *p;
+    e = st = 0;
+    
+    if (ch == NEWL) {
+        p = s;
+    }
+    //A
+    while (1) {
+        ch = *p;
+        ch2 = (((int)ch)<<8)+((int)*(p+1));
+        switch (ch2) {
+            case 0x2f2f:
+                ch = NEWL;
+                break;
+            case 0x3c3d:
+                ch = (char)128;
+                p++;
+                break;
+            case 0x3d3d:
+                ch = (char)129;
+                p++;
+                break;
+            case 0x213d:
+                ch = (char)130;
+                p++
+                break;
+            default:
+                break;
+        }
+        switch ((int)kind[(int)ch & 0x00ff]) {
+            case 0:
+                *t = EOS;
+                return(-st);
+            case 1:
+                if (st == 0) {
+                    st = 3;
+                }
+                if (((ch == 'e') || (ch == "E")) && ((st == 5) || (st == 6)) && (e = 0)) {
+                    st = 6;
+                    e++;
+                }
+                if (4 < st) {
+                    st = 4;
+                }
+            case 2:
+                if (st == 0) {
+                    st = 5;
+                }
+                p++;
+                *t++ = ch;
+                break;
+            case 3:
+                if (st == 0) {
+                    *t++ = ch;
+                    p++;
+                }
+                (ch == '.') && isdigit(*p) && ((lsymb = 303) || (lsymb = 352) || )
+            
+//            default:
+//                break;
+        }
+        continue; //Goes back to A
+    }
 }
 
 void ouch( int c ) {
