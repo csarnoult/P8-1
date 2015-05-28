@@ -1,7 +1,15 @@
-//	p8.org		1996 apr 21	last modified 1998 jun 01
-//
-//	Shows organization of dan's p8.c.
-//
+/*  Authors:    Nicholas Rebhun
+ *              Chris Arnoult
+ *
+ *  Course:     CS-4110 (Compiler Design)
+ *  Project:    p1
+ *
+ *  Start Date: 19 May 2015
+ *  Last Edit:  26 May 2015
+ * ======================================================
+ * Project Description:
+ * ------------------------------------------------------
+ ********************************************************/
 
 #include "p8.h"
 
@@ -36,13 +44,45 @@ int main( int argc,char **argv ) {
 }
 
 long double atold( char *a ) {
-	long double tento( int );
-
-	long double y;
-	int n,p,s;
+    long double tento( int );
+    long double y;
+    int n,p,s;
+    
+    y = (long double) 0;
+    n = p = s = 0;
+    
+    while (*a == ' ' || *a == '\t') {
+        a++;
+    }
+    if (*a == '-') {
+        a++;
+        s++;
+    }
+    
+    while (isdigit( *a )) {
+        y = (long double) 10 * y + (long double)((*a++) - '0');
+    }
+    
+    if (*a == '.') {
+        a++;
+        while (isdigit( *a )) {
+            p++;
+            y = (long double) 10 * y + (long double)((*a++) - '0');
+        }
+    }
+    
+    if ((*a == 'e') || (*a == 'E')) {
+        n = atoi( ++a );
+    }
+    y = y * tento( n - p );
+    
+    return (s ? -y : y);
 }
 
 void baddigitstr( char *t ) {
+    fprintf(fpe, e2, line, t);
+    nerr++;
+    lsymb = symbol[nsymb++] = 0;
 }
 
 void closeout( void ) {
@@ -78,6 +118,9 @@ void emit3( int i,int j,int k ) {
 }
 
 void extradot( int d,char *t ) {
+    printf(fpe, e0, line, d, t );
+    nerr++;
+    lsymb= symbol[nsymb++] = 0;
 }
 
 //Completed by Chris Arnoult
@@ -124,8 +167,32 @@ void getsymbol( void ) {
 //				       else hash = y.
 //
 int hash( char *s ) {
-	int h,q;
-	char *p;
+    int h,q;
+    char *p;
+    
+    for (p = s, q = 0; *p; q = q+(int)*p, p++);
+    
+    h = (q % HSIZE) - 1;
+    
+    for (q = 0; ;) {
+        
+        if (HSIZE <= ++h) {
+            h = 0;
+        }
+        
+        if (hashp[h].ptss == (char *)NULL) {
+            return ( -(h+1));
+        }
+        
+        if (strcmp( s, hashp[p].ptss) == 0) {
+            return h;
+        }
+        
+        if (HSIZE <= ++q) {
+            puts("** hash table overflow **");
+            exit(1);
+        }
+    }
 }
 
 //Completed by Chris Arnoult
@@ -140,9 +207,36 @@ void initparse( void ) {
 }
 
 void initscan( void ) {
-	int hash( char * );
-
-	int h,i;
+    int hash( char * );
+    int h,i;
+    
+    ch = NEWL;
+    line = nerr = nilit = nilit = nivar = nrlit = nrvar = nsymb = 0;
+    hashp = (HASHREC *)malloc( HSIZE * sizeof(HASHREC));
+    
+    if (hashp == (HASHREC*)NULL) {
+        puts("** can't allocate hash table **");
+        exit( 1 );
+    }
+    
+    ssp = (char *)malloc( SSIZE );
+    
+    if (ssp == (char *)NULL) {
+        puts("** can't allocate string space **");
+        exit( 1 );
+    }
+    
+    ssp1 = ssp + SSIZE;
+    
+    for (i = 0; i < HSIZE; i++) {
+        hashp[i].ptss = (char *)NULL;
+    }
+    
+    for (i = 0; i < sizeof(trw) / sizeof( char *); i++) {
+        h = -hash(trw[i] + 1);
+        hashp[h].ptss = trw[i];
+        hashp[h].icod = 300 + i;
+    }
 }
 
 //Completed by Chris Arnoult
@@ -163,7 +257,7 @@ void intstr( char *t ) {
         exit(1);
     }
     ilit[nilit++] = x;
-    lsymb = symbol[nsymb++] = 249+nilit;
+    lsymb = symbol[nsymb++] = 249 + nilit;
 }
 
 //Completed by Chris Arnoult
@@ -221,6 +315,18 @@ void letterstr( char *t ) {
 }
 
 void makename( char *p,char *q,char *r ) {
+    
+    for (; *p && *p++;) {
+        *r++ = *p++;
+    }
+    
+    *r++ = '.';
+    
+    for (; *q;) {
+        *r++ = *q++;
+    }
+    
+    *r = EOS;    
 }
 
 void match( void ) {
@@ -320,6 +426,92 @@ void outscan( void ) {
 
 	int c,i,j,k;
 	char fsym[13];
+    
+    fclose( fpe );
+    free( (void *)hashp);
+    
+    if ( nerr ) {
+        printf("\n\n%d error%sdetected in scan\n\n", nerr, (nerr < 2 ? " " : "s "));
+        fpe = fopen("$$err$$", "rt");
+        
+        while ((c = getc( fpe )) != EOF) {
+            ouch( c );
+        }
+        
+        fclose( fpe );
+        puts( "\n" );
+    }
+    
+    if ( sopt ) {
+        makename( fname, "sym", fsym);
+        if (fps = fopen( fsym, "wt")) == (FILE *)NULL) {
+            printf( "** can't open %s**", fsym );
+            exit( 1 );
+        }
+        
+        fprintf( fps, "\t\t\t\tSymbol tables: %s\n", fname );
+        
+        if (nrvar) {
+            fputs( "\n\nreal variables\n\n", fps );
+            
+            for (i = 0; i < nrvar; i++) {
+                fprintf( fps, "%6d    %s\n", 100+i, var[i] );
+            }
+        }
+        
+        if (nivar) {
+            fputs( "\n\ninteger variables\n\n", fps );
+            for (i = 0; i < nivar; i++) {
+                fprintf( fps, "%6d    %s\n", 150+i, var[50+i] );
+            }
+        }
+        
+        if (nrlit) {
+            fputs( "\n\nreal literals\n\n", fps );
+            for (i = 0; i < nrlit; i++) {
+                fprintf( fps, "%6d    %s\n", 200+i, (double)rlit[i] );
+            }
+        }
+        
+        if (nilit) {
+            fputs( "\n\ninteger literals\n\n", fps );
+            for (i = 0; i < nilit; i++) {
+                fprintf( fps, "%6d%15ld\n", 250+i, ilit[i] );
+            }
+        }
+        
+        if (nerr) {
+            fprintf( fps, "\n\n%d error%sdetected in scan\n\n", nerr, (nerr < 2 ? " " : "s ") );
+            while (c = getc( fpe )) != EOF ) {
+                fputc( c, fps );
+            }
+            fclose( fpe );
+            fputs( "\n", fps);
+        }
+        
+        fprintf( fps, "\t\tinternal form: %d symbols\n\n", nsymb );
+        
+        for (i = 0; i < nsymb; i++) {
+            k = symbol[i];
+            if (400 < k) {
+                fprintf( fps, "\n%6d", k )
+                j = 0;
+            } else {
+                if (SYMLIN < ++j) {
+                    fprintf( fps, "\n    " );
+                    j = 1;
+                }
+                fprintf( fps, "%5d", k );
+            }
+        }
+        
+        fputc( (int) NEWL, fps );
+        fclose( fps );
+    }
+    
+    if( unlink( "$$err$$" ) != 0 ) {
+        puts( "** cannot delete \"$$err$$\" **" );
+    }
 }
 
 void parse( void ) {
@@ -349,6 +541,7 @@ void scan( void ) {
 }
 
 void shift( void ) {
+    
 }
 
 long double tento( int n ) {
