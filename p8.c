@@ -1044,7 +1044,6 @@ int nexts( char *s,char *t ) {
     if (ch == NEWL) {
         p = s;
     }
-    //A
     while (1) {
         ch = *p;
         ch2 = (((int)ch)<<8)+((int)*(p+1));
@@ -1093,13 +1092,48 @@ int nexts( char *s,char *t ) {
                 if (st == 0) {
                     *t++ = ch;
                     p++;
+                    if((ch == '.') && isdigit(*p) && ((lsymb = 303) || (lsymb = 352) || (lsymb == 354) || ((358 < lsymb) && (lsymb < 364)))) {
+                        st = 5;
+                        break;
+                    }
+                *t = EOS;
+                return(2);
                 }
-                (ch == '.') && isdigit(*p) && ((lsymb = 303) || (lsymb = 352) || )
-            
-//            default:
-//                break;
+                if (st == 3) {
+                    *t = EOS;
+                    return(3);
+                }
+                if (ch == '-' && ((*(t-1)=='e') || (*(t-1) == 'E'))) {
+                    p++;
+                    *t++ = ch;
+                    break;
+                }
+                if (ch == '.') {
+                    *t++ = ch;
+                    p++;
+                    if (4 < st) {
+                        st++;
+                    }
+                    break;
+                }
+                *t = EOS;
+                return(st);
+                    
+            case 4:
+                p++;
+                if (st) {
+                    *t = EOS;
+                    return(st);
+                }
+                break;
+            case 5:
+                if (st == 0) {
+                    p++;
+                    return(1);
+                }
+                *t = EOS;
+                return(st);
         }
-        continue; //Goes back to A
     }
 }
 
