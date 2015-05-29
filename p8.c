@@ -5,7 +5,7 @@
  *  Project:    p1
  *
  *  Start Date: 19 May 2015
- *  Last Edit:  26 May 2015
+ *  Last Edit:  28 May 2015
  * ======================================================
  * Project Description:
  * ------------------------------------------------------
@@ -143,7 +143,18 @@ void closeout( void ) {
     rename(fcode, fasm);
 }
 
+//Completed by Chris Arnoult
 int comp( int s,int *p ) {
+    for (modes = (int)mode[s]; *p && s; p++) {
+        if (symbol[--s] != *p) {
+            return(2);
+        }
+        if (2 < (modes |= (int)mode[s])) {
+            return(1);
+        }
+        continue;
+    }
+    return(0);
 }
 
 //Completed by Chris Arnoult
@@ -824,7 +835,24 @@ void gencode( void ) {
     }
 }
 
+//Completed by Chris Arnoult (errorrrrrrrs???????)
 void getsymbol( void ) {
+    if (nsymb <= isymb) {
+        eos++;
+    }
+    while (400 < alpha) && !eos) {
+        if (nsymb <= ++isymb) {
+            eos++;
+        }
+        else {
+            if (400 < (alpha = symbol[isymb])) {
+                line = alpha-400;
+            }
+        }
+    }
+    if (!eos) {
+        clj = (alpha < 300 ? alpha/100-1 : alpha-(alpha < 310 ? 298 : 338));
+    }
 }
 //
 //	If string s is new, return -(hash+1)
@@ -1015,12 +1043,38 @@ void makename( char *p,char *q,char *r ) {
     *r = EOS;    
 }
 
+//Completed by Chris Arnoult
 void match( void ) {
 	void gencode( void );
+    if (row < 37) {
+        top -= subtop[row];
+    }
+    symbol[top] - sigma = newsigma[row]+400;
+    cli = newsigma[row]+27;
+    if (row == 0) {
+        mode[top] = (char)0;
+    }
+    if (row == 21) {
+        aux[top] = aux[top+1];      // <primary> -> (<expr>)
+        mode[top] = (char)modes;
+    }
+    if (code[row]) {
+        gencode();
+    }
 }
 
+//Completed by Chris Arnoult
 int nextr( void ) {
 	int r;
+    for (r = 0; rbu[r]; r++) {
+        continue;
+    }
+    if (5 < r) {
+        bug = 3;
+        return(0);
+    }
+    rbu[r] = (char)l;               //Is that (char)l supposed to be a 1????????
+    return(r);
 }
 //
 //	st is as follows:
@@ -1309,20 +1363,89 @@ void reduce( void ) {
     
 }
 
+//Completed by Chris Arnoult
 void reportbug( void ) {
 	void ouch( int );
-
 	int i,j,k;
+    
+    fclose(fpe);
+    unlink(fcode);
+    if (bug < 7) {
+        printf("\n\n ** line %d: %s **\n", (bug == 3 ? line : eline),bugm[bug-1]);
+        return;
+    }
+    printf("\n\n** bug at or near line %d: numbug = %d **\n\n sigma = %4d\n alpha = %4d\n\n isymb = %4d\n top =%4d\n\n cli =%4d\n clj =%4d\n\n",eline,bug,sigma,alpha,isymb,top,cli,clj);
+    if ((j = top-9) < 1) {
+        j = 0;
+    }
+    printf(" Stack [%4d-top] = ", j);
+    for (i = j; i <= top; i++) {
+        printf("%5d",symbol[i]);
+        continue;
+    }
+    ouch((int)NEWL);
+    if (isymb < nsymb) {
+        if (nsymb <= (k = isymb+9)) {
+            k = nsymb-1;
+        }
+        printf("string [%4d-%4d] = ",isymb,k);
+        for (i = isymb; i <= k; i++) {
+            printf("%5d",symbol[i]);
+            continue;
+        }
+        ouch((int)NEWL);
+    }
+    printf("\n\nmaxtop = %d\n\n",maxtop);
 }
 
+//Completed by Chris Arnoult (Could have scope errors)
 void scan( void ) {
 	int nexts( char *,char * );
 	void baddigitstr( char * ),delimiter( void ),extradot( int,char * ),
 		floatstr( char * ),illegalch( void ),initscan( void ),
 		intstr( char * ),letterstr( char * ),outscan( void );
-
 	int st;
 	char s[MAXL+1],t[MAXL+1];
+    
+    initscan();
+    while (fgets(s,MAXL+1,fps) != (char*)NULL) {
+        line++;
+        lsymb = symbol[nsymb++] = 400+line;
+        while ((st = nexts(s,t)) != 0) {
+            switch (0 < st ? st: -st) {
+                case 1:
+                    illegalch();
+                    break;
+                case 2:
+                    delimiter();
+                    break;
+                case 3:
+                    letterstr(t);
+                    break;
+                case 4:
+                    baddigitstr(t);
+                    break;
+                case 5:
+                    intstr(t);
+                    break;
+                case 6:
+                    floatstr(t);
+                    break;
+                default:
+                    extradot(st-5,t);
+                    break;
+            }
+        }
+        if (0 < st) {
+            continue;       //Is continue what I should be putting here?
+        }
+        continue;
+    }
+    if (fclose(fps)) {
+        printf("** can't close %s **\n", fname);
+        exit(1);
+    }
+    outscan();
 }
 
 void shift( void ) {
