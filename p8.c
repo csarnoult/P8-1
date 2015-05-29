@@ -840,7 +840,7 @@ void getsymbol( void ) {
     if (nsymb <= isymb) {
         eos++;
     }
-    while (400 < alpha) && !eos) {
+    while (400 < alpha && !eos) {
         if (nsymb <= ++isymb) {
             eos++;
         }
@@ -851,7 +851,7 @@ void getsymbol( void ) {
         }
     }
     if (!eos) {
-        clj = (alpha < 300 ? alpha/100-1 : alpha-(alpha < 310 ? 298 : 338));
+        c1j = (alpha < 300 ? alpha/100-1 : alpha-(alpha < 310 ? 298 : 338));
     }
 }
 //
@@ -1049,8 +1049,8 @@ void match( void ) {
     if (row < 37) {
         top -= subtop[row];
     }
-    symbol[top] - sigma = newsigma[row]+400;
-    cli = newsigma[row]+27;
+    symbol[top] = sigma = newsigma[row]+400;
+    c1i = newsigma[row]+27;
     if (row == 0) {
         mode[top] = (char)0;
     }
@@ -1073,7 +1073,7 @@ int nextr( void ) {
         bug = 3;
         return(0);
     }
-    rbu[r] = (char)l;               //Is that (char)l supposed to be a 1????????
+    rbu[r] = (char)1;               //Is that (char)l supposed to be a 1????????
     return(r);
 }
 //
@@ -1115,7 +1115,7 @@ int nexts( char *s,char *t ) {
                 break;
             case 0x213d:
                 ch = (char)130;
-                p++
+                p++;
                 break;
             default:
                 break;
@@ -1374,7 +1374,7 @@ void reportbug( void ) {
         printf("\n\n ** line %d: %s **\n", (bug == 3 ? line : eline),bugm[bug-1]);
         return;
     }
-    printf("\n\n** bug at or near line %d: numbug = %d **\n\n sigma = %4d\n alpha = %4d\n\n isymb = %4d\n top =%4d\n\n cli =%4d\n clj =%4d\n\n",eline,bug,sigma,alpha,isymb,top,cli,clj);
+    printf("\n\n** bug at or near line %d: numbug = %d **\n\n sigma = %4d\n alpha = %4d\n\n isymb = %4d\n top =%4d\n\n c1i =%4d\n c1j =%4d\n\n",eline,bug,sigma,alpha,isymb,top,c1i,c1j);
     if ((j = top-9) < 1) {
         j = 0;
     }
