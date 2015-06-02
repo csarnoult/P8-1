@@ -2,10 +2,10 @@
  *              Chris Arnoult
  *
  *  Course:     CS-4110 (Compiler Design)
- *  Project:    p1
+ *  Project:    p8
  *
- *  Start Date: 19 May 2015
- *  Last Edit:  28 May 2015
+ *  Start Date: 19  May     2015
+ *  Last Edit:  02  June    2015
  * ======================================================
  * Project Description:
  * ------------------------------------------------------
@@ -15,7 +15,7 @@
 
 int main( int argc,char **argv ) {
 	void parse( void ),scan( void );
-
+    
 	if ( (argc < 2) || (3 < argc) ) {
 		puts( "** use is >p8 [-y] sourcefilename **" );
 		exit( 1 );
@@ -43,17 +43,19 @@ int main( int argc,char **argv ) {
 	return( 0 );
 }
 
+// Completed by Nick Rebhun | p.95, checked
 long double atold( char *a ) {
     long double tento( int );
     long double y;
     int n,p,s;
     
-    y = (long double) 0;
+    y = (long double)0;
     n = p = s = 0;
     
     while (*a == ' ' || *a == '\t') {
         a++;
     }
+    
     if (*a == '-') {
         a++;
         s++;
@@ -74,17 +76,20 @@ long double atold( char *a ) {
     if ((*a == 'e') || (*a == 'E')) {
         n = atoi( ++a );
     }
-    y = y * tento( n - p );
     
+    y = y * tento( n - p );
     return (s ? -y : y);
 }
 
+// Completed by Nick Rebhun | p.96, checked
 void baddigitstr( char *t ) {
     fprintf(fpe, e2, line, t);
     nerr++;
+    printf("Incrementing nerr in: baddigitstr.\n");
     lsymb = symbol[nsymb++] = 0;
 }
 
+// Completed by Nick Rebhun | p.121 - 122
 void closeout( void ) {
 	void makename( char *,char *,char * );
 
@@ -143,21 +148,22 @@ void closeout( void ) {
     rename(fcode, fasm);
 }
 
-//Completed by Chris Arnoult
+// Completed by Chris Arnoult | p.123, checked
 int comp( int s,int *p ) {
     for (modes = (int)mode[s]; *p && s; p++) {
         if (symbol[--s] != *p) {
             return(2);
+        } else {
+            if (2 < (modes |= (int)mode[s])) {
+                return(1);
+            }
         }
-        if (2 < (modes |= (int)mode[s])) {
-            return(1);
-        }
-        continue;
     }
+    
     return(0);
 }
 
-//Completed by Chris Arnoult
+// Completed by Chris Arnoult | p.97, checked
 void delimiter( void ) {
     lsymb = symbol[nsymb++] = 350+(int)delim[(int)ch & 0x00ff];
     if (ch == ';') {
@@ -165,6 +171,7 @@ void delimiter( void ) {
     }
 }
 
+// All emit functions completed by Nick Rebhun | p.124
 void emit0( int n ) {
     if (n < 100) {
         fprintf( fpc, "%s", reg[n] );
@@ -197,13 +204,15 @@ void emit3( int i, int j, int k ) {
     fputs( "\n", fpc );
 }
 
+// Completed by Nick Rebhun | p.98, checked
 void extradot( int d,char *t ) {
-    printf(fpe, e0, line, d, t );
+    fprintf(fpe, e0, line, d, t );
     nerr++;
+    printf("Incrementing nerr in: extradot.\n");
     lsymb= symbol[nsymb++] = 0;
 }
 
-//Completed by Chris Arnoult
+// Completed by Chris Arnoult | p.99, checked
 void floatstr( char *t ) {
 	long double atold( char * );
 	double x;
@@ -212,24 +221,30 @@ void floatstr( char *t ) {
     if (!isdigit(*(t+strlen(t)-1))) {
         fprintf(fpe,e2,line,t);
         nerr++;
+        printf("Incrementing nerr in: floatstr.\n");
         lsymb = symbol[nsymb++] = 0;
         return;
-    }
-    x = atold(t);
-    for (i = 0; i < nrlit; i++) {
-        if (x == rlit[i]) {
-            lsymb = symbol[nsymb++] = 200+i;
-            return;
+    } else {
+        x = atold(t);
+        
+        for (i = 0; i < nrlit; i++) {
+            if (x == rlit[i]) {
+                lsymb = symbol[nsymb++] = 200+i;
+                return;
+            }
+        }
+        
+        if (50 <= nrlit) {
+            puts("** too many real literals **");
+            exit(1);
+        } else {
+            rlit[nrlit++] = x;
+            lsymb = symbol[nsymb++] = 199+nrlit;
         }
     }
-    if (50 <= nrlit) {
-        puts("** too many real literals **");
-        exit(1);
-    }
-    rlit[nrlit++] = x;
-    lsymb = symbol[nsymb++] = 199+nrlit;
 }
 
+// Provided by Professor Jurca
 void gencode( void ) {
     int nextr( void );
     void emit1( int ),emit2( int,int ),emit3( int,int,int );
@@ -289,7 +304,7 @@ void gencode( void ) {
             ouf = (char)1;
         }
             break;
-        case  5: if ( bstop < brk ) {
+        case  5: if ( bstop < ibrk ) {
             bug = 6;
         } else {
             *bstop |= 1;
@@ -835,23 +850,24 @@ void gencode( void ) {
     }
 }
 
-//Completed by Chris Arnoult (errorrrrrrrs???????)
+// Completed by Chris Arnoult | p.125, checked
 void getsymbol( void ) {
     if (nsymb <= isymb) {
         eos++;
-    }
-    while (400 < alpha && !eos) {
-        if (nsymb <= ++isymb) {
-            eos++;
-        }
-        else {
-            if (400 < (alpha = symbol[isymb])) {
-                line = alpha-400;
+    } else {
+        do {
+            if (nsymb <= ++isymb) {
+                eos++;
+            } else {
+                if (400 < (alpha = symbol[isymb])) {
+                    line = alpha-400;
+                }
             }
+        } while (400 < alpha && !eos);
+        
+        if (!eos) {
+            c1j = (alpha < 300 ? alpha/100-1 : alpha-(alpha < 310 ? 298 : 338));
         }
-    }
-    if (!eos) {
-        c1j = (alpha < 300 ? alpha/100-1 : alpha-(alpha < 310 ? 298 : 338));
     }
 }
 //
@@ -861,22 +877,25 @@ void getsymbol( void ) {
 //		if return value y < 0, then hash = -(y+1)
 //				       else hash = y.
 //
+
+// Completed by Nick Rebhun | p.100, checked
 int hash( char *s ) {
     int h,q;
     char *p;
     
+    // q = sum of ASCII codes of chars in string s
     for (p = s, q = 0; *p; q = q+(int)*p, p++);
     
-    h = (q % HSIZE) - 1;
+    h = (q % HSIZE) - 1;        // h is index into hash table
     
-    for (q = 0; ;) {
+    for (q = 0; ;) {            // q counts "collisions" now
         
         if (HSIZE <= ++h) {
             h = 0;
         }
         
         if (hashp[h].ptss == (char *)NULL) {
-            return ( -(h+1));
+            return (-(h+1));
         }
         
         if ( strcmp(s, hashp[h].ptss) == 0) {
@@ -890,13 +909,15 @@ int hash( char *s ) {
     }
 }
 
-//Completed by Chris Arnoult
+// Completed by Chris Arnoult | p.101, checked
 void illegalch( void ) {
     fprintf(fpe,e1,line,ch);
     nerr++;
+    printf("Incrementing nerr in: illegalch.\n");
     lsymb = symbol[nsymb++] = 0;
 }
 
+// Provided by Professor Jurca
 void initparse( void ) {
 	int r;
     
@@ -914,48 +935,49 @@ void initparse( void ) {
     isymb = label = maxtop = top = -1;
     inf = ini = ouf = oui = bug = eos = sd = 0;     // removed char cast. if bugs occur, look here
     
-    bstop = brk-1;
+    bstop = ibrk-1;
     for (r = 0; r < 6; r++) {
         rbu[r] = (char)0;
     }
 }
 
+// Completed by Nick Rebhun | p.102, checked
 void initscan( void ) {
     int hash( char * );
     int h,i;
     
     ch = NEWL;
-    line = nerr = nilit = nilit = nivar = nrlit = nrvar = nsymb = 0;
+    line = nerr = nilit = nivar = nrlit = nrvar = nsymb = 0;
     hashp = (HASHREC *)malloc( HSIZE * sizeof(HASHREC));
     
     if (hashp == (HASHREC*)NULL) {
         puts("** can't allocate hash table **");
         exit( 1 );
-    }
-    
-    ssp = (char *)malloc( SSIZE );
-    
-    if (ssp == (char *)NULL) {
-        puts("** can't allocate string space **");
-        exit( 1 );
-    }
-    
-    ssp1 = ssp + SSIZE;
-    
-    for (i = 0; i < HSIZE; i++) {
-        hashp[i].ptss = (char *)NULL;
-    }
-    
-    for (i = 0; i < sizeof(trw) / sizeof( char *); i++) {
-        h = -hash(trw[i] + 1);
-        hashp[h].ptss = trw[i];
-        hashp[h].icod = 300 + i;
+    } else {
+        ssp = (char *)malloc( SSIZE );
+        
+        if (ssp == (char *)NULL) {
+            puts("** can't allocate string space **");
+            exit( 1 );
+        } else {
+            ssp1 = ssp + SSIZE;
+            
+            for (i = 0; i < HSIZE; i++) {
+                hashp[i].ptss = (char *)NULL;
+            }
+
+            for (i = 0; i < sizeof(trw) / sizeof( char *); i++) {
+                h = -(hash(trw[i] + 1));
+                hashp[h].ptss = trw[i];
+                hashp[h].icod = 300 + i;
+            }
+        }
     }
 }
 
-//Completed by Chris Arnoult
+// Completed by Chris Arnoult | p.103, checked
 void intstr( char *t ) {
-	long atol( char * );
+	long atol(const char * );
 	long x;
 	int i;
     
@@ -966,15 +988,17 @@ void intstr( char *t ) {
             return;
         }
     }
+    
     if (50 <= nilit) {
         puts("** too mamny int literals **");
         exit(1);
+    } else {
+        ilit[nilit++] = x;
+        lsymb = symbol[nsymb++] = 249 + nilit;
     }
-    ilit[nilit++] = x;
-    lsymb = symbol[nsymb++] = 249 + nilit;
 }
 
-//Completed by Chris Arnoult
+//Completed by Chris Arnoult | p.104, checked
 void letterstr( char *t ) {
 	int hash( char * );
 	int h,i;
@@ -982,55 +1006,63 @@ void letterstr( char *t ) {
     
     h = hash(t);
     
-    //old string
-    if (0 <= h) {
+    if (0 <= h) {               //old string
         i = hashp[h].icod;
+        
         if (i == 0) {
             fprintf(fpe, e4, line, t);
             nerr++;
+            printf("Incrementing nerr in: letterstr (1).\n");
         }
+        
         if ((i < 200) && ((lrw == 300) || (lrw == 301))) {
-            fprintf(fpe, e4, line, t);
+            fprintf(fpe, e3, line, t);
             nerr++;
         }
+        
         if (300 <= i) {
             lrw = i;
         }
+        
         lsymb = symbol[nsymb++] = i;
+    } else {                    //new string
+        if (ssp1 <= ssp+strlen(t)) {
+            puts("** out of string space **");
+            unlink("$$err$$");
+            fclose(fps);
+            exit(1);
+        } else {
+            h = -(h+1);
+            hashp[h].ptss = ssp;
+            p = t;
+            
+            //copy to sspace
+            while ((*ssp++ = *p++) != EOS) {}
+            
+            if (lrw == 300) {
+                var[nrvar] = hashp[h].ptss;
+                lsymb = symbol[nsymb++] = hashp[h].icod = 100+(nrvar++);
+                return;
+            } else {
+                if (lrw == 301) {
+                    var[50+nivar] = hashp[h].ptss;
+                    lsymb = symbol[nsymb++] = hashp[h].icod = 150+(nivar++);
+                    return;
+                } else {
+                    fprintf(fpe, e4, line, t);
+                    nerr++;
+                    printf("Incrementing nerr in: letterstr (2).\n");
+                    lsymb = symbol[nsymb++] = hashp[h].icod = 0;
+                }
+            }
+        }
     }
-    
-    //new string
-    if (ssp1 <= ssp+strlen(t)) {
-        puts("** out of string space **");
-        unlink("$$err$$");
-        fclose(fps);
-        exit(1);
-    }
-    
-    h = -(h+1);
-    hashp[h].ptss = ssp;
-    p = t;
-    
-    //copy to sspace
-    while ((*ssp++ = *p++) != EOS) {}
-    if (lrw == 300) {
-        var[nrvar] = hashp[h].ptss;
-        lsymb = symbol[nsymb++] = hashp[h].icod = 100+(nrvar++);
-        return;
-    }
-    if (lrw == 301) {
-        var[50+nivar] = hashp[h].ptss;
-        lsymb = symbol[nsymb++] = hashp[h].icod = 150+(nivar++);
-        return;
-    }
-    fprintf(fpe, e4, line, t);
-    nerr++;
-    lsymb = symbol[nsymb++] = hashp[h].icod = 0;
 }
 
+// Completed by Nick Rebhun | p.105, checked
 void makename( char *p,char *q,char *r ) {
     
-    for (; *p && *p++;) {
+    for (; *p && (*p != '.');) {
         *r++ = *p++;
     }
     
@@ -1043,38 +1075,44 @@ void makename( char *p,char *q,char *r ) {
     *r = EOS;    
 }
 
-//Completed by Chris Arnoult
+// Completed by Chris Arnoult | p.127 checked
 void match( void ) {
 	void gencode( void );
+    
     if (row < 37) {
         top -= subtop[row];
     }
+    
     symbol[top] = sigma = newsigma[row]+400;
     c1i = newsigma[row]+27;
+    
     if (row == 0) {
         mode[top] = (char)0;
+    } else {
+        if (row == 21) {
+            aux[top] = aux[top+1];      // <primary> -> (<expr>)
+            mode[top] = (char)modes;
+        }
     }
-    if (row == 21) {
-        aux[top] = aux[top+1];      // <primary> -> (<expr>)
-        mode[top] = (char)modes;
-    }
+    
     if (code[row]) {
         gencode();
     }
 }
 
-//Completed by Chris Arnoult
+// Completed by Chris Arnoult | p.128 checked
 int nextr( void ) {
 	int r;
     for (r = 0; rbu[r]; r++) {
-        continue;
     }
+    
     if (5 < r) {
         bug = 3;
         return(0);
+    } else {
+        rbu[r] = (char)1;
+        return(r);
     }
-    rbu[r] = (char)1;               //Is that (char)l supposed to be a 1????????
-    return(r);
 }
 //
 //	st is as follows:
@@ -1089,37 +1127,41 @@ int nextr( void ) {
 //	  7,8,... : too many dots (st-5 dots)
 //
 
-//Completed by Chris Arnoult (This could have errors)
+// Completed by Chris Arnoult | p.106 - 108, checked
 int nexts( char *s,char *t ) {
 	int ch2,e,st;
 	static char *p;
+    
     e = st = 0;
     
     if (ch == NEWL) {
         p = s;
     }
+    
     while (1) {
         ch = *p;
         ch2 = (((int)ch)<<8)+((int)*(p+1));
+        
         switch (ch2) {
             case 0x2f2f:
-                ch = NEWL;
+                ch = NEWL;          // "//"
                 break;
             case 0x3c3d:
-                ch = (char)128;
+                ch = (char)128;     // "<="
                 p++;
                 break;
             case 0x3d3d:
-                ch = (char)129;
+                ch = (char)129;     // "=="
                 p++;
                 break;
             case 0x213d:
-                ch = (char)130;
+                ch = (char)130;     // "!="
                 p++;
                 break;
             default:
                 break;
         }
+        
         switch ((int)kind[(int)ch & 0x00ff]) {
             case 0:
                 *t = EOS;
@@ -1128,12 +1170,14 @@ int nexts( char *s,char *t ) {
                 if (st == 0) {
                     st = 3;
                 }
-                if (((ch == 'e') || (ch == "E")) && ((st == 5) || (st == 6)) && (e = 0)) {
+                
+                if (((ch == 'e') || (ch == 'E')) && ((st == 5) || (st == 6)) && (e = 0)) {
                     st = 6;
                     e++;
-                }
-                if (4 < st) {
-                    st = 4;
+                } else {
+                    if (4 < st) {
+                        st = 4;
+                    }
                 }
             case 2:
                 if (st == 0) {
@@ -1146,47 +1190,54 @@ int nexts( char *s,char *t ) {
                 if (st == 0) {
                     *t++ = ch;
                     p++;
-                    if((ch == '.') && isdigit(*p) && ((lsymb = 303) || (lsymb = 352) || (lsymb == 354) || ((358 < lsymb) && (lsymb < 364)))) {
+                    if((ch == '-') && isdigit(*p) && ((lsymb = 303) || (lsymb = 352) || (lsymb == 354) || ((358 < lsymb) && (lsymb < 364)))) {
                         st = 5;
                         break;
+                    } else {
+                        *t = EOS;
+                        return(2);
                     }
-                *t = EOS;
-                return(2);
-                }
-                if (st == 3) {
-                    *t = EOS;
-                    return(3);
-                }
-                if (ch == '-' && ((*(t-1)=='e') || (*(t-1) == 'E'))) {
-                    p++;
-                    *t++ = ch;
-                    break;
-                }
-                if (ch == '.') {
-                    *t++ = ch;
-                    p++;
-                    if (4 < st) {
-                        st++;
+                } else {
+                    if (st == 3) {
+                        *t = EOS;
+                        return(3);
+                    } else {
+                        if (ch == '-' && ((*(t-1)=='e') || (*(t-1) == 'E'))) {
+                            p++;
+                            *t++ = ch;
+                            break;
+                        } else {
+                            if (ch == '.') {
+                                *t++ = ch;
+                                p++;
+                                if (4 < st) {
+                                    st++;
+                                }
+                                break;
+                            } else {
+                                *t = EOS;
+                                return(st);
+                            }
+                        }
                     }
-                    break;
                 }
-                *t = EOS;
-                return(st);
-                    
+                
             case 4:
                 p++;
                 if (st) {
                     *t = EOS;
                     return(st);
+                } else {
+                    break;
                 }
-                break;
             case 5:
                 if (st == 0) {
                     p++;
                     return(1);
+                } else {
+                    *t = EOS;
+                    return(st);
                 }
-                *t = EOS;
-                return(st);
         }
     }
 }
@@ -1195,6 +1246,7 @@ void ouch( int c ) {
 	putchar( c );
 }
 
+// Completed by Nick Rebhun | p.109 - 111
 void outscan( void ) {
 	void makename( char *,char *,char * ),ouch( int );
 
@@ -1218,7 +1270,7 @@ void outscan( void ) {
     
     if ( sopt ) {
         makename( fname, "sym", fsym);
-        if (fps = fopen( fsym, "wt") == (FILE *)NULL) {
+        if ((fps = fopen( fsym, "wt")) == (FILE *)NULL) {
             printf( "** can't open %s**", fsym );
             exit( 1 );
         }
@@ -1243,7 +1295,7 @@ void outscan( void ) {
         if (nrlit) {
             fputs( "\n\nreal literals\n\n", fps );
             for (i = 0; i < nrlit; i++) {
-                fprintf( fps, "%6d    %s\n", 200+i, (double)rlit[i] );
+                fprintf( fps, "%6d    %f\n", 200+i, (double)rlit[i] );
             }
         }
         
@@ -1256,7 +1308,7 @@ void outscan( void ) {
         
         if (nerr) {
             fprintf( fps, "\n\n%d error%sdetected in scan\n\n", nerr, (nerr < 2 ? " " : "s ") );
-            while (c = getc( fpe ) != EOF ) {
+            while ((c = getc( fpe )) != EOF ) {
                 fputc( c, fps );
             }
             fclose( fpe );
@@ -1288,6 +1340,7 @@ void outscan( void ) {
     }
 }
 
+// Completed by Nick Rebhun | p.129, checked
 void parse( void ) {
 	void closeout( void ),getsymbol( void ),initparse( void ),
 		reduce( void ),reportbug( void ),shift( void );
@@ -1298,61 +1351,62 @@ void parse( void ) {
         bug = 3;
         reportbug();
         return;
-    }
-    
-    shift();
-    getsymbol();
-    
-    do {
-        if (eos) {
-            if ( (top == 0 ) && (sigma == 400) ){
-                break;
-            } else {
-                reduce();
-            }
-        } else {
-            switch ( (int)c1[c1i][c1j] ) {
-                case 0:
-                    shift();
-                    getsymbol();
-                    break;
-                
-                case 1:
-                    reduce();
-                    break;
-                default:
-                    bug = 10 + (int)c1[c1i][c1j];
-            }
-        }
-        
-    } while (!bug);
-    
-    if (bug) {
-        reportbug();
     } else {
-        closeout();
+        shift();
+        getsymbol();
+        
+        do {
+            if (eos) {
+                if ( (top == 0 ) && (sigma == 400) ){
+                    break;
+                } else {
+                    reduce();
+                }
+            } else {
+                switch ( (int)c1[c1i][c1j] ) {
+                    case 0:
+                        shift();
+                        getsymbol();
+                        break;
+                    
+                    case 1:
+                        reduce();
+                        break;
+                    default:
+                        bug = 10 + (int)c1[c1i][c1j];
+                }
+            }
+            
+        } while (!bug);
+        
+        if (bug) {
+            reportbug();
+        } else {
+            closeout();
+        }
     }
 }
 
+// Completed by Nick Rebhun | p.130, checked
 void reduce( void ) {
 	int comp( int,int * );
 	void match( void );
     
     row = first[c1i];
     
-    if (row < 3) {
+    if (row < 37) {
         while (1) {
             if ( (bug = comp( top, c2+c2ptr[row] )) < 2 ) {
                 break;
-            }
-            
-            if (same[++row] != sigma) {
-                bug = 2;
-                break;
-            }
-            
-            if ( (row == 16) && (symbol[top-1]!= 403) ) {
-                row++;
+            } else {
+                if (same[++row] != sigma) {
+                    bug = 2;
+                    break;
+                } else {
+                    if ( (row == 16) && (symbol[top-1]!= 403) ) {
+                        row++;
+                    }
+                }
             }
         }
     }
@@ -1363,42 +1417,51 @@ void reduce( void ) {
     
 }
 
-//Completed by Chris Arnoult
+// Completed by Chris Arnoult | p.131, checked
 void reportbug( void ) {
 	void ouch( int );
 	int i,j,k;
     
     fclose(fpe);
     unlink(fcode);
+    
     if (bug < 7) {
         printf("\n\n ** line %d: %s **\n", (bug == 3 ? line : eline),bugm[bug-1]);
         return;
-    }
-    printf("\n\n** bug at or near line %d: numbug = %d **\n\n sigma = %4d\n alpha = %4d\n\n isymb = %4d\n top =%4d\n\n c1i =%4d\n c1j =%4d\n\n",eline,bug,sigma,alpha,isymb,top,c1i,c1j);
-    if ((j = top-9) < 1) {
-        j = 0;
-    }
-    printf(" Stack [%4d-top] = ", j);
-    for (i = j; i <= top; i++) {
-        printf("%5d",symbol[i]);
-        continue;
-    }
-    ouch((int)NEWL);
-    if (isymb < nsymb) {
-        if (nsymb <= (k = isymb+9)) {
-            k = nsymb-1;
+    } else {
+        printf("\n\n** bug at or near line %d: numbug = %d **\n\n sigma = %4d\n alpha = %4d\n\n isymb = %4d\n top =%4d\n\n c1i =%4d\n c1j =%4d\n\n",eline,bug,sigma,alpha,isymb,top,c1i,c1j);
+        
+        if ((j = top-9) < 1) {
+            j = 0;
         }
-        printf("string [%4d-%4d] = ",isymb,k);
-        for (i = isymb; i <= k; i++) {
+        
+        printf(" Stack [%4d-top] = ", j);
+        
+        for (i = j; i <= top; i++) {
             printf("%5d",symbol[i]);
-            continue;
         }
+        
         ouch((int)NEWL);
+        
+        if (isymb < nsymb) {
+            if (nsymb <= (k = isymb+9)) {
+                k = nsymb-1;
+            }
+            
+            printf("string [%4d-%4d] = ",isymb,k);
+            
+            for (i = isymb; i <= k; i++) {
+                printf("%5d",symbol[i]);
+            }
+            
+            ouch((int)NEWL);
+        }
+        
+        printf("\n\nmaxtop = %d\n\n",maxtop);
     }
-    printf("\n\nmaxtop = %d\n\n",maxtop);
 }
 
-//Completed by Chris Arnoult (Could have scope errors)
+// Completed by Chris Arnoult | p.112 checked
 void scan( void ) {
 	int nexts( char *,char * );
 	void baddigitstr( char * ),delimiter( void ),extradot( int,char * ),
@@ -1408,47 +1471,49 @@ void scan( void ) {
 	char s[MAXL+1],t[MAXL+1];
     
     initscan();
-    while (fgets(s,MAXL+1,fps) != (char*)NULL) {
+    while (fgets(s, MAXL+1, fps) != (char*)NULL) {
+        printf("\ns: %s\n", s);
         line++;
         lsymb = symbol[nsymb++] = 400+line;
-        while ((st = nexts(s,t)) != 0) {
-            switch (0 < st ? st: -st) {
-                case 1:
-                    illegalch();
-                    break;
-                case 2:
-                    delimiter();
-                    break;
-                case 3:
-                    letterstr(t);
-                    break;
-                case 4:
-                    baddigitstr(t);
-                    break;
-                case 5:
-                    intstr(t);
-                    break;
-                case 6:
-                    floatstr(t);
-                    break;
-                default:
-                    extradot(st-5,t);
-                    break;
+        do {
+            if ((st = nexts(s,t)) != 0) {
+                switch (0 < st ? st: -st) {
+                    case 1:
+                        illegalch();
+                        break;
+                    case 2:
+                        delimiter();
+                        break;
+                    case 3:
+                        letterstr(t);
+                        break;
+                    case 4:
+                        baddigitstr(t);
+                        break;
+                    case 5:
+                        intstr(t);
+                        break;
+                    case 6:
+                        floatstr(t);
+                        break;
+                    default:
+                        extradot(st-5,t);
+                }
             }
-        }
-        if (0 < st) {
-            continue;       //Is continue what I should be putting here?
-        }
-        continue;
+        } while (0 < st);
     }
+    
     if (fclose(fps)) {
         printf("** can't close %s **\n", fname);
         exit(1);
     }
+    
     outscan();
 }
 
+// Completed by Nick Rebhun | p.132, checked
 void shift( void ) {
+    
     if (maxtop < ++top) {
         maxtop = top;
     }
@@ -1459,8 +1524,8 @@ void shift( void ) {
     if (300 <= alpha) {
         mode[top] = (char)(aux[top] = 0);
     } else {
-        aux[top] = alpha;
-        mode[top] = (char)(((alpha-sigma) < 50) + 1);
+        aux[top] = alpha;                               // float:   2
+        mode[top] = (char)(((alpha-sigma) < 50) + 1);   // int:     1
     }
     
     if (alpha == 306) {
@@ -1472,6 +1537,7 @@ void shift( void ) {
     eline = line;
 }
 
+// Completed by Nick Rebhun | p.113, checked
 long double tento( int n ) {
 	long double y,z;
     

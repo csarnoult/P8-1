@@ -3,6 +3,9 @@
 
 #include <ctype.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 
 #define EOS '\0'			// end of string marker
 #define HSIZE 211			// hash table size
@@ -24,7 +27,7 @@
 	HASHREC *hashp;
 	long double rlit[50];
 	long ilit[50];
-	int alpha,aux[128],brk[16],*bstop,bug,c1i,c1j,
+	int alpha,aux[128],ibrk[16],*bstop,bug,c1i,c1j,
 		c2[86]={424,354,100,  0,424,363,421,  0,404,403,
 			  0,424,303,  0,420,  0,305,  0,304,  0,
 			308,409,  0,405,  0,413,  0,414,  0,415,
