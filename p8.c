@@ -5,7 +5,7 @@
  *  Project:    p8
  *
  *  Start Date: 19  May     2015
- *  Last Edit:  02  June    2015
+ *  Last Edit:  03  June    2015
  * ======================================================
  * Project Description:
  * ------------------------------------------------------
@@ -884,21 +884,23 @@ int hash( char *s ) {
     char *p;
     
     // q = sum of ASCII codes of chars in string s
-    for (p = s, q = 0; *p; q = q+(int)*p, p++);
+    for (p = s, q = 0; *p; q = q+(int)*p, p++) {}
     
     h = (q % HSIZE) - 1;        // h is index into hash table
     
     for (q = 0; ;) {            // q counts "collisions" now
-        
+        printf("\nhashp[%d].ptss: %s    hashp[%d].icod: %d", h, hashp[h].ptss, h, hashp[h].icod);
         if (HSIZE <= ++h) {
             h = 0;
         }
         
         if (hashp[h].ptss == (char *)NULL) {
+            printf("\nReturning -(h+1): %d\n", (-(h+1)));
             return (-(h+1));
         }
         
         if ( strcmp(s, hashp[h].ptss) == 0) {
+            printf("\nReturning h: %d\n", h);
             return h;
         }
         
@@ -911,7 +913,8 @@ int hash( char *s ) {
 
 // Completed by Chris Arnoult | p.101, checked
 void illegalch( void ) {
-    fprintf(fpe,e1,line,ch);
+    fprintf(fpe, e1, line, '!');
+    printf("ch:%c\n", ch);
     nerr++;
     printf("Incrementing nerr in: illegalch.\n");
     lsymb = symbol[nsymb++] = 0;
@@ -1246,7 +1249,7 @@ void ouch( int c ) {
 	putchar( c );
 }
 
-// Completed by Nick Rebhun | p.109 - 111
+// Completed by Nick Rebhun | p.109 - 111, checked
 void outscan( void ) {
 	void makename( char *,char *,char * ),ouch( int );
 
@@ -1333,10 +1336,10 @@ void outscan( void ) {
         
         fputc( (int) NEWL, fps );
         fclose( fps );
-    }
-    
-    if( unlink( "$$err$$" ) != 0 ) {
-        puts( "** cannot delete \"$$err$$\" **" );
+    } else {
+        if( unlink( "$$err$$" ) != 0 ) {
+            puts( "** cannot delete \"$$err$$\" **" );
+        }
     }
 }
 
@@ -1472,10 +1475,10 @@ void scan( void ) {
     
     initscan();
     while (fgets(s, MAXL+1, fps) != (char*)NULL) {
-        printf("\ns: %s\n", s);
         line++;
         lsymb = symbol[nsymb++] = 400+line;
         do {
+            //printf("\n===============\ns: %s     t: %s     st: %d\nline: %d     lsymb: %d     symbol: %d\n", s, t, st, line, lsymb, symbol[nsymb]);
             if ((st = nexts(s,t)) != 0) {
                 switch (0 < st ? st: -st) {
                     case 1:
