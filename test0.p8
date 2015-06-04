@@ -1,3 +1,5 @@
 {
-    int a, b, c;
+    int a, b;
+    a = 1;
+    b = 2;
 }

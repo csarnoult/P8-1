@@ -852,23 +852,27 @@ void gencode( void ) {
 
 // Completed by Chris Arnoult | p.125, checked
 void getsymbol( void ) {
+    printf("\n>>>> Entering getsymbol <<<<");
     if (nsymb <= isymb) {
         eos++;
     } else {
-        while (400 < alpha && !eos){
+        do {
             if (nsymb <= ++isymb) {
                 eos++;
             } else {
+                printf("\nsymbol[%d] = %d", isymb, symbol[isymb]);
                 if (400 < (alpha = symbol[isymb])) {
                     line = alpha-400;
                 }
+                printf("\nalpha is %d\nline is %d", alpha, line);
             }
-        }
+        } while ((400 < alpha) && !eos);
         
         if (!eos) {
             c1j = (alpha < 300 ? alpha/100-1 : alpha-(alpha < 310 ? 298 : 338));
         }
     }
+    printf("\n>>>> Exiting getsymbol <<<<");
 }
 
 //	If string s is new, return -(hash+1)
@@ -925,6 +929,7 @@ void illegalch( void ) {
 
 // Provided by Professor Jurca
 void initparse( void ) {
+    printf("\n>>>> Entering initparse <<<<");
 	int r;
     
     if ( (fpc = fopen( fcode, "wt" )) == (FILE *)NULL ) {
@@ -945,6 +950,8 @@ void initparse( void ) {
     for (r = 0; r < 6; r++) {
         rbu[r] = (char)0;
     }
+    
+    printf("\n>>>> Exiting initparse <<<<");
 }
 
 // Completed by Nick Rebhun | p.102, checked
@@ -979,7 +986,7 @@ void initscan( void ) {
             h = -(hash(trw[i]) + 1);
             hashp[h].ptss = trw[i];
             hashp[h].icod = 300 + i;
-            printf("\nhashp[%d].ptss = %s\nhashp[%d].icod = %d", i, hashp[i].ptss, i, hashp[i].icod);
+            //printf("\nhashp[%d].ptss = %s\nhashp[%d].icod = %d", i, hashp[i].ptss, i, hashp[i].icod);
         }
     }
     printf("\n>>>>> Exiting initscan <<<<<\n");
@@ -1118,11 +1125,11 @@ void match( void ) {
 // Completed by Chris Arnoult | p.128 checked
 int nextr( void ) {
 	int r;
-    for (r = 0; rbu[r]; r++) {
-    }
+    for (r = 0; rbu[r]; r++);
     
     if (5 < r) {
         bug = 3;
+        printf("\nBug reported in nextr");
         return(0);
     } else {
         rbu[r] = (char)1;
@@ -1272,6 +1279,7 @@ void outscan( void ) {
     fclose( fpe );
     free( (void *)hashp);
     printf("\n*****nerr = %d", nerr);
+    
     if ( nerr ) {
         printf("\n\n%d error%sdetected in scan\n\n", nerr, (nerr < 2 ? " " : "s "));
         fpe = fopen("$$err$$", "rt");
@@ -1365,41 +1373,42 @@ void parse( void ) {
     
     if (alpha != 350) {         // not start with '{'
         bug = 3;
+        printf("\nBug reported in parse");
         reportbug();
         return;
-    } else {
-        shift();
-        getsymbol();
-        
-        while (!bug) {
-            if (eos) {
-                if ( (top == 0 ) && (sigma == 400) ){
-                    break;
-                } else {
-                    reduce();
-                }
+    }
+    shift();
+    getsymbol();
+    
+    do {
+        if (eos) {
+            if ( (top == 0 ) && (sigma == 400) ){
+                break;
             } else {
-                switch ( (int)c1[c1i][c1j] ) {
-                    case 0:
-                        shift();
-                        getsymbol();
-                        break;
-                    
-                    case 1:
-                        reduce();
-                        break;
-                    default:
-                        bug = 10 + (int)c1[c1i][c1j];
-                }
+                reduce();
+            }
+        } else {
+            switch ( (int)c1[c1i][c1j] ) {
+                case 0:
+                    shift();
+                    getsymbol();
+                    break;
+                
+                case 1:
+                    reduce();
+                    break;
+                default:
+                    bug = 10 + (int)c1[c1i][c1j];
             }
         }
-        
-        if (bug) {
-            reportbug();
-        } else {
-            closeout();
-        }
+    } while (!bug);
+    
+    if (bug) {
+        reportbug();
+    } else {
+        closeout();
     }
+    
 }
 
 // Completed by Nick Rebhun | p.130, checked
@@ -1408,7 +1417,7 @@ void reduce( void ) {
 	void match( void );
     
     row = first[c1i];
-    
+    printf("\n>>>> Entering reduce <<<<");
     if (row < 37) {
         while (1) {
             if ( (bug = comp( top, c2+c2ptr[row] )) < 2 ) {
@@ -1425,11 +1434,11 @@ void reduce( void ) {
             }
         }
     }
-    
+    printf("\nbug is %d", bug);
     if (bug == 0) {
         match();
     }
-    
+    printf("\n>>>> Exiting reduce <<<<");
 }
 
 // Completed by Chris Arnoult | p.131, checked
@@ -1441,7 +1450,7 @@ void reportbug( void ) {
     unlink(fcode);
     
     if (bug < 7) {
-        printf("\n\n ** line %d: %s **\n", (bug == 3 ? line : eline),bugm[bug-1]);
+        printf("\n\n ** line %d: %s **\n", (bug == 3 ? line : eline), bugm[bug-1]);
         return;
     } else {
         printf("\n\n** bug at or near line %d: numbug = %d **\n\n sigma = %4d\n alpha = %4d\n\n isymb = %4d\n top =%4d\n\n c1i =%4d\n c1j =%4d\n\n",eline,bug,sigma,alpha,isymb,top,c1i,c1j);
@@ -1496,28 +1505,33 @@ void scan( void ) {
             if ((st = nexts(s,t)) != 0) {
                 switch (0 < st ? st: -st) {
                     case 1:
+                        printf("\n case 1: illegalch");
                         illegalch();
                         break;
                     case 2:
+                        printf("\n case 2: delimiter");
                         delimiter();
                         break;
                     case 3:
+                        printf("\n case 3: letterstr");
                         letterstr(t);
                         break;
                     case 4:
+                        printf("\n case 4: baddigitstr");
                         baddigitstr(t);
                         break;
                     case 5:
+                        printf("\n case 5: intstr(%s)", t);
                         intstr(t);
                         break;
                     case 6:
+                        printf("\n case 6: floatstr");
                         floatstr(t);
                         break;
                     default:
                         extradot(st-5,t);
                 }
                 //printf("\ns: %s     t: %s     st: %d    line: %d     lsymb: %d     symbol: %d", s, t, st, line, lsymb, symbol[nsymb]);
-
             }
         }
     }
