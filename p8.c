@@ -855,7 +855,7 @@ void getsymbol( void ) {
     if (nsymb <= isymb) {
         eos++;
     } else {
-        do {
+        while (400 < alpha && !eos){
             if (nsymb <= ++isymb) {
                 eos++;
             } else {
@@ -863,7 +863,7 @@ void getsymbol( void ) {
                     line = alpha-400;
                 }
             }
-        } while (400 < alpha && !eos);
+        }
         
         if (!eos) {
             c1j = (alpha < 300 ? alpha/100-1 : alpha-(alpha < 310 ? 298 : 338));
@@ -881,11 +881,11 @@ void getsymbol( void ) {
 int hash( char *s ) {
     int h,q;
     char *p;
-    
+    printf("\n\n==== Entering hash function with input: %s ====", s);
     // q = sum of ASCII codes of chars in string s
     for (p = s, q = 0; *p; q = q+(int)*p, p++);
     
-    printf("\nq: %d (sum of ASCII codes of chars in string '%s')", q, s);
+    //printf("\nq: %d (sum of ASCII codes of chars in string '%s')", q, s);
     h = (q % HSIZE) - 1;        // h is index into hash table
     
     //printf("   h: %d", h);
@@ -898,12 +898,12 @@ int hash( char *s ) {
         //printf("\nhashp[%d].ptss: %s    hashp[%d].icod: %d", h, hashp[h].ptss, h, hashp[h].icod);
         
         if (hashp[h].ptss == (char *)NULL) {
-            printf("\nReturning -(h+1): %d", (-(h+1)));
+            //printf("\nReturning -(h+1): %d", (-(h+1)));
             return (-(h+1));
         }
         
         if ( strcmp(s, hashp[h].ptss) == 0) {
-            printf("\nReturning h: %d\n", h);
+            //printf("\nReturning h: %d", h);
             return h;
         }
         
@@ -951,7 +951,7 @@ void initparse( void ) {
 void initscan( void ) {
     int hash( char * );
     int h,i;
-    
+    printf("\n>>>>> Entering initscan <<<<<\n");
     ch = NEWL;
     line = nerr = nilit = nivar = nrlit = nrvar = nsymb = 0;
     hashp = (HASHREC *)malloc( HSIZE * sizeof(HASHREC));
@@ -968,22 +968,21 @@ void initscan( void ) {
         }
         
         ssp1 = ssp + SSIZE;
-        printf("\n\n>>>> Setting up hashp <<<<");
+        printf("\n\n>>>> Setting up hash table <<<<");
         for (i = 0; i < HSIZE; i++) {
             hashp[i].ptss = (char *)NULL;
-            printf("\nhashp[%d].ptss = %s", i, hashp[i].ptss);
+            //printf("\nhashp[%d].ptss = %s", i, hashp[i].ptss);
         }
         
-        //printf("\nNumber of elements in trw: %d\n\n", (sizeof(trw) / sizeof(char *)));
-        
         for (i = 0; i < (sizeof(trw) / sizeof( char *)); i++) {
-            printf("\ntrw[%d] = %s", i, trw[i]);          /// LOOOK HERE NICK
+            //printf("\nAdding trw[%d] (%s) to the hash table", i, trw[i]);
             h = -(hash(trw[i]) + 1);
             hashp[h].ptss = trw[i];
             hashp[h].icod = 300 + i;
-            //printf("hashp[%d].ptss = %s\nhashp[%d].icod = %d", i, hashp[i].ptss, i, hashp[i].icod);
+            printf("\nhashp[%d].ptss = %s\nhashp[%d].icod = %d", i, hashp[i].ptss, i, hashp[i].icod);
         }
     }
+    printf("\n>>>>> Exiting initscan <<<<<\n");
 }
 
 // Completed by Chris Arnoult | p.103, checked
@@ -1372,7 +1371,7 @@ void parse( void ) {
         shift();
         getsymbol();
         
-        do {
+        while (!bug) {
             if (eos) {
                 if ( (top == 0 ) && (sigma == 400) ){
                     break;
@@ -1393,8 +1392,7 @@ void parse( void ) {
                         bug = 10 + (int)c1[c1i][c1j];
                 }
             }
-            
-        } while (!bug);
+        }
         
         if (bug) {
             reportbug();
@@ -1446,7 +1444,7 @@ void reportbug( void ) {
         printf("\n\n ** line %d: %s **\n", (bug == 3 ? line : eline),bugm[bug-1]);
         return;
     } else {
-        //printf("\n\n** bug at or near line %d: numbug = %d **\n\n sigma = %4d\n alpha = %4d\n\n isymb = %4d\n top =%4d\n\n c1i =%4d\n c1j =%4d\n\n",eline,bug,sigma,alpha,isymb,top,c1i,c1j);
+        printf("\n\n** bug at or near line %d: numbug = %d **\n\n sigma = %4d\n alpha = %4d\n\n isymb = %4d\n top =%4d\n\n c1i =%4d\n c1j =%4d\n\n",eline,bug,sigma,alpha,isymb,top,c1i,c1j);
         
         if ((j = top-9) < 1) {
             j = 0;
@@ -1488,10 +1486,13 @@ void scan( void ) {
 	char s[MAXL+1],t[MAXL+1];
     
     initscan();
+    
+    printf("\n>>>>> Reading from fps <<<<<");
     while (fgets(s, MAXL+1, fps) != (char*)NULL) {
         line++;
         lsymb = symbol[nsymb++] = 400+line;
-        do {
+        
+        while (st < 0) {
             if ((st = nexts(s,t)) != 0) {
                 switch (0 < st ? st: -st) {
                     case 1:
@@ -1515,11 +1516,12 @@ void scan( void ) {
                     default:
                         extradot(st-5,t);
                 }
-                printf("\ns: %s     t: %s     st: %d    line: %d     lsymb: %d     symbol: %d", s, t, st, line, lsymb, symbol[nsymb]);
+                //printf("\ns: %s     t: %s     st: %d    line: %d     lsymb: %d     symbol: %d", s, t, st, line, lsymb, symbol[nsymb]);
 
             }
-        } while (0 < st);
+        }
     }
+    printf("\n>>>>> Finished reading from fps <<<<<");
     
     if (fclose(fps)) {
         printf("** can't close %s **\n", fname);
