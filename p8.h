@@ -11,10 +11,10 @@
 #define HSIZE 211			// hash table size
 #define MAXL 240			// max input line length
 #define NEWL '\n'			// new line
-#define OP0 aux[top]			// operand in code generator
-#define OP1 aux[top+1]			// operand in code generator
-#define OP2 aux[top+2]			// operand in code generator
-#define OP3 aux[top+3]			// operand in code generator
+#define OP0 aux[top]		// operand in code generator
+#define OP1 aux[top+1]		// operand in code generator
+#define OP2 aux[top+2]		// operand in code generator
+#define OP3 aux[top+3]		// operand in code generator
 #define SSIZE 1024			// stringspace size
 #define SYMLIN 10			// max number of symbols per line
 
@@ -194,6 +194,6 @@
 			    1,1,0,2,2,1,0,0,4,3,
 			    2,2,2,2,1,0,2,2,0,3,
 			    2,1,0,1,1,2,1},
-		*trw[10]={"float","int",  "input","output","return",
-			  "break","while","if",   "else",  "repeat"},
+		*trw[10]={"float", "int", "input", "output", "return",
+			  "break", "while", "if", "else", "repeat"},
 		*var[100];

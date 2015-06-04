@@ -5,7 +5,7 @@
  *  Project:    p8
  *
  *  Start Date: 19  May     2015
- *  Last Edit:  03  June    2015
+ *  Last Edit:  04  June    2015
  * ======================================================
  * Project Description:
  * ------------------------------------------------------
@@ -870,13 +870,12 @@ void getsymbol( void ) {
         }
     }
 }
-//
+
 //	If string s is new, return -(hash+1)
 //	else if found, return hash.
 //	Thus (in calling function):
 //		if return value y < 0, then hash = -(y+1)
 //				       else hash = y.
-//
 
 // Completed by Nick Rebhun | p.100, checked
 int hash( char *s ) {
@@ -884,18 +883,22 @@ int hash( char *s ) {
     char *p;
     
     // q = sum of ASCII codes of chars in string s
-    for (p = s, q = 0; *p; q = q+(int)*p, p++) {}
+    for (p = s, q = 0; *p; q = q+(int)*p, p++);
     
+    printf("\nq: %d (sum of ASCII codes of chars in string '%s')", q, s);
     h = (q % HSIZE) - 1;        // h is index into hash table
     
+    //printf("   h: %d", h);
     for (q = 0; ;) {            // q counts "collisions" now
-        printf("\nhashp[%d].ptss: %s    hashp[%d].icod: %d", h, hashp[h].ptss, h, hashp[h].icod);
+        
         if (HSIZE <= ++h) {
             h = 0;
         }
         
+        //printf("\nhashp[%d].ptss: %s    hashp[%d].icod: %d", h, hashp[h].ptss, h, hashp[h].icod);
+        
         if (hashp[h].ptss == (char *)NULL) {
-            printf("\nReturning -(h+1): %d\n", (-(h+1)));
+            printf("\nReturning -(h+1): %d", (-(h+1)));
             return (-(h+1));
         }
         
@@ -913,10 +916,10 @@ int hash( char *s ) {
 
 // Completed by Chris Arnoult | p.101, checked
 void illegalch( void ) {
-    fprintf(fpe, e1, line, '!');
-    printf("ch:%c\n", ch);
+    fprintf(fpe, e1, line, ch);
+    printf("\nch: %c", ch);
     nerr++;
-    printf("Incrementing nerr in: illegalch.\n");
+    printf("\nIncrementing nerr in: illegalch.");
     lsymb = symbol[nsymb++] = 0;
 }
 
@@ -936,7 +939,7 @@ void initparse( void ) {
     }
     
     isymb = label = maxtop = top = -1;
-    inf = ini = ouf = oui = bug = eos = sd = 0;     // removed char cast. if bugs occur, look here
+    inf = ini = ouf = oui = bug = eos = sd = 0;
     
     bstop = ibrk-1;
     for (r = 0; r < 6; r++) {
@@ -962,18 +965,23 @@ void initscan( void ) {
         if (ssp == (char *)NULL) {
             puts("** can't allocate string space **");
             exit( 1 );
-        } else {
-            ssp1 = ssp + SSIZE;
-            
-            for (i = 0; i < HSIZE; i++) {
-                hashp[i].ptss = (char *)NULL;
-            }
-
-            for (i = 0; i < sizeof(trw) / sizeof( char *); i++) {
-                h = -(hash(trw[i] + 1));
-                hashp[h].ptss = trw[i];
-                hashp[h].icod = 300 + i;
-            }
+        }
+        
+        ssp1 = ssp + SSIZE;
+        printf("\n\n>>>> Setting up hashp <<<<");
+        for (i = 0; i < HSIZE; i++) {
+            hashp[i].ptss = (char *)NULL;
+            printf("\nhashp[%d].ptss = %s", i, hashp[i].ptss);
+        }
+        
+        //printf("\nNumber of elements in trw: %d\n\n", (sizeof(trw) / sizeof(char *)));
+        
+        for (i = 0; i < (sizeof(trw) / sizeof( char *)); i++) {
+            printf("\ntrw[%d] = %s", i, trw[i]);          /// LOOOK HERE NICK
+            h = -(hash(trw[i]) + 1);
+            hashp[h].ptss = trw[i];
+            hashp[h].icod = 300 + i;
+            //printf("hashp[%d].ptss = %s\nhashp[%d].icod = %d", i, hashp[i].ptss, i, hashp[i].icod);
         }
     }
 }
@@ -993,7 +1001,7 @@ void intstr( char *t ) {
     }
     
     if (50 <= nilit) {
-        puts("** too mamny int literals **");
+        puts("** too many int literals **");
         exit(1);
     } else {
         ilit[nilit++] = x;
@@ -1001,7 +1009,7 @@ void intstr( char *t ) {
     }
 }
 
-//Completed by Chris Arnoult | p.104, checked
+// Completed by Chris Arnoult | p.104, checked
 void letterstr( char *t ) {
 	int hash( char * );
 	int h,i;
@@ -1009,16 +1017,21 @@ void letterstr( char *t ) {
     
     h = hash(t);
     
+    printf("\nh = %d", h);
+    
     if (0 <= h) {               //old string
         i = hashp[h].icod;
         
+        
         if (i == 0) {
+            //printf("\n>>>>> printing on fpe");
             fprintf(fpe, e4, line, t);
             nerr++;
-            printf("Incrementing nerr in: letterstr (1).\n");
+            //printf("\nIncrementing nerr in: letterstr (1).");
         }
         
         if ((i < 200) && ((lrw == 300) || (lrw == 301))) {
+            //printf("\n>>>> printing on fpe: Doubly-Defined");
             fprintf(fpe, e3, line, t);
             nerr++;
         }
@@ -1117,6 +1130,7 @@ int nextr( void ) {
         return(r);
     }
 }
+
 //
 //	st is as follows:
 //	      -st : last symbol in string (here 0 < st)
@@ -1258,7 +1272,7 @@ void outscan( void ) {
     
     fclose( fpe );
     free( (void *)hashp);
-    
+    printf("\n*****nerr = %d", nerr);
     if ( nerr ) {
         printf("\n\n%d error%sdetected in scan\n\n", nerr, (nerr < 2 ? " " : "s "));
         fpe = fopen("$$err$$", "rt");
@@ -1432,7 +1446,7 @@ void reportbug( void ) {
         printf("\n\n ** line %d: %s **\n", (bug == 3 ? line : eline),bugm[bug-1]);
         return;
     } else {
-        printf("\n\n** bug at or near line %d: numbug = %d **\n\n sigma = %4d\n alpha = %4d\n\n isymb = %4d\n top =%4d\n\n c1i =%4d\n c1j =%4d\n\n",eline,bug,sigma,alpha,isymb,top,c1i,c1j);
+        //printf("\n\n** bug at or near line %d: numbug = %d **\n\n sigma = %4d\n alpha = %4d\n\n isymb = %4d\n top =%4d\n\n c1i =%4d\n c1j =%4d\n\n",eline,bug,sigma,alpha,isymb,top,c1i,c1j);
         
         if ((j = top-9) < 1) {
             j = 0;
@@ -1478,7 +1492,6 @@ void scan( void ) {
         line++;
         lsymb = symbol[nsymb++] = 400+line;
         do {
-            //printf("\n===============\ns: %s     t: %s     st: %d\nline: %d     lsymb: %d     symbol: %d\n", s, t, st, line, lsymb, symbol[nsymb]);
             if ((st = nexts(s,t)) != 0) {
                 switch (0 < st ? st: -st) {
                     case 1:
@@ -1502,6 +1515,8 @@ void scan( void ) {
                     default:
                         extradot(st-5,t);
                 }
+                printf("\ns: %s     t: %s     st: %d    line: %d     lsymb: %d     symbol: %d", s, t, st, line, lsymb, symbol[nsymb]);
+
             }
         } while (0 < st);
     }
