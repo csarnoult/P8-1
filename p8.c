@@ -858,8 +858,9 @@ void gencode( void ) {
 
 // Completed by Chris Arnoult | p.125, checked
 void getsymbol( void ) {
+    void DEBUG_PRINT_SYMBOL_TABLE( void );
     printf("\n>>>> Entering getsymbol <<<<");
-    printf("\nnsymb: %d    isymb: %d", nsymb, isymb);
+    //printf("\nnsymb: %d    isymb: %d", nsymb, isymb);
     
     if (nsymb <= isymb) {
         eos++;
@@ -868,7 +869,7 @@ void getsymbol( void ) {
             if (nsymb <= ++isymb) {
                 eos++;
             } else {
-                printf("\nsymbol[%d] = %d", isymb, symbol[isymb]);
+                //printf("\nsymbol[%d] = %d", isymb, symbol[isymb]);
                 if (400 < (alpha = symbol[isymb])) {
                     line = alpha-400;
                 }
@@ -881,7 +882,7 @@ void getsymbol( void ) {
             c1j = (alpha < 300 ? alpha/100-1 : alpha-(alpha < 310 ? 298 : 338));
         }
     }
-    printf("\nalpha is %d    line is %d    nsymb is %d    isymb is %d    eos is %d", alpha, line, nsymb, isymb, eos);
+    //DEBUG_PRINT_SYMBOL_TABLE();
     printf("\n>>>> Exiting getsymbol <<<<");
 }
 
@@ -931,7 +932,7 @@ int hash( char *s ) {
 // Completed by Chris Arnoult | p.101, checked
 void illegalch( void ) {
     fprintf(fpe, e1, line, ch);
-    printf("\nch: %c", ch);
+    printf("\nch: '%c'", ch);
     nerr++;
     printf("\nIncrementing nerr in: illegalch.");
     lsymb = symbol[nsymb++] = 0;
@@ -1294,8 +1295,11 @@ void outscan( void ) {
 	int c,i,j,k;
 	char fsym[13];
     
+    printf("\n>>>> Entering outscan <<<<");
+    
     fclose( fpe );
     free( (void *)hashp);
+    
     printf("\n*****nerr = %d", nerr);
     
     if ( nerr ) {
@@ -1380,12 +1384,14 @@ void outscan( void ) {
             puts( "** cannot delete \"$$err$$\" **" );
         }
     }
+    printf("\n>>>> Exiting outscan <<<<");
 }
 
 // Completed by Nick Rebhun | p.129, checked
 void parse( void ) {
 	void closeout( void ),getsymbol( void ),initparse( void ),
 		reduce( void ),reportbug( void ),shift( void ), DEBUG_PRINT_HASH_TABLE( void );
+    printf("\n>>>> Entering parse <<<<");
     initparse();
     getsymbol();
     
@@ -1393,8 +1399,8 @@ void parse( void ) {
         bug = 3;
         printf("\nBug reported in parse");
         reportbug();
-        printf("\nHashing '{' returns %d", (hash("{")));
-        DEBUG_PRINT_HASH_TABLE();
+        //printf("\nHashing '{' returns %d", (hash("{")));
+        //DEBUG_PRINT_HASH_TABLE();
         return;
     }
     shift();
@@ -1429,6 +1435,7 @@ void parse( void ) {
         closeout();
     }
     
+    printf("\n>>>> Exiting parse <<<<\n");
 }
 
 // Completed by Nick Rebhun | p.130, checked
@@ -1515,14 +1522,17 @@ void scan( void ) {
 	char s[MAXL+1],t[MAXL+1];
     
     initscan();
-    DEBUG_PRINT_HASH_TABLE();
+    //DEBUG_PRINT_HASH_TABLE();
     printf("\n>>>>> Reading from fps <<<<<");
+    
     while (fgets(s, MAXL+1, fps) != (char*)NULL) {
         line++;
         lsymb = symbol[nsymb++] = 400+line;
         printf("\nsymbol[%d] is now %d  |  Changed in scan", nsymb-1, symbol[nsymb-1]);
-        while (st < 0) {
+        
+        do {
             if ((st = nexts(s,t)) != 0) {
+                printf("\nst is %d after nexts(%s, %s)", st, s, t);
                 switch (0 < st ? st: -st) {
                     case 1:
                         printf("\n case 1: illegalch");
@@ -1553,7 +1563,7 @@ void scan( void ) {
                 }
                 //printf("\ns: %s     t: %s     st: %d    line: %d     lsymb: %d     symbol: %d", s, t, st, line, lsymb, symbol[nsymb]);
             }
-        }
+        } while (st < 0);
     }
     printf("\n>>>>> Finished reading from fps <<<<<");
     
@@ -1618,6 +1628,16 @@ void DEBUG_PRINT_HASH_TABLE() {
     
     for (int i = 0; i < HSIZE; i++) {
         printf("\n %3d          %6s       %3d", i, hashp[i].ptss, hashp[i].icod);
+    }
+    printf("\n===============================\n");
+}
+
+void DEBUG_PRINT_SYMBOL_TABLE() {
+    printf("\n===== SYMBOL TABLE CONTENTS =====");
+    printf("\nEntry:           Data:");
+    
+    for (int i = 0; i < (sizeof(symbol) / sizeof(int)); i++) {
+        printf("\n %4d          %5d", i, symbol[i]);
     }
     printf("\n===============================\n");
 }
