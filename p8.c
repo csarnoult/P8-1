@@ -851,22 +851,29 @@ void gencode( void ) {
 }
 
 // Completed by Chris Arnoult | p.125, checked
-void getsymbol( void ) {
-    if (nsymb <= isymb) {
+void getsymbol( void )
+{
+    if(nsymb <= isymb)
+    {
         eos++;
-    } else {
-        while (400 < alpha && !eos){
-            if (nsymb <= ++isymb) {
+    }
+    else
+    {
+        do {
+            if(nsymb <= ++isymb)
+            {
                 eos++;
-            } else {
-                if (400 < (alpha = symbol[isymb])) {
+            }
+            else
+            {
+                if(400 < (alpha = symbol[isymb]))
+                {
                     line = alpha-400;
                 }
             }
-        }
-        
-        if (!eos) {
-            c1j = (alpha < 300 ? alpha/100-1 : alpha-(alpha < 310 ? 298 : 338));
+        } while ((400 < alpha) && !eos);
+        if (!eos){
+        c1j = (alpha < 300 ? alpha/100-1 : alpha-(alpha < 310 ? 298 : 338));
         }
     }
 }
