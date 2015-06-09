@@ -85,9 +85,9 @@ long double atold( char *a ) {
 void baddigitstr( char *t ) {
     fprintf(fpe, e2, line, t);
     nerr++;
-    printf("Incrementing nerr in: baddigitstr.\n");
+    // printf("Incrementing nerr in: baddigitstr.\n");
     lsymb = symbol[nsymb++] = 0;
-    printf("\nsymbol[%d] is now %d  |  Changed in baddigitstr", nsymb-1, symbol[nsymb-1]);
+    // printf("\nsymbol[%d] is now %d  |  Changed in baddigitstr", nsymb-1, symbol[nsymb-1]);
 }
 
 // Completed by Nick Rebhun | p.121 - 122
@@ -167,7 +167,7 @@ int comp( int s,int *p ) {
 // Completed by Chris Arnoult | p.97, checked
 void delimiter( void ) {
     lsymb = symbol[nsymb++] = 350+(int)delim[(int)ch & 0x00ff];
-    printf("\nsymbol[%d] is now %d  |  Changed in delimiter", nsymb-1, symbol[nsymb-1]);
+    // printf("\nsymbol[%d] is now %d  |  Changed in delimiter", nsymb-1, symbol[nsymb-1]);
     if (ch == ';') {
         lrw = 0;
     }
@@ -210,9 +210,9 @@ void emit3( int i, int j, int k ) {
 void extradot( int d,char *t ) {
     fprintf(fpe, e0, line, d, t );
     nerr++;
-    printf("Incrementing nerr in: extradot.\n");
+    // printf("Incrementing nerr in: extradot.\n");
     lsymb= symbol[nsymb++] = 0;
-    printf("\nsymbol[%d] is now %d  |  Changed in extradot", nsymb-1, symbol[nsymb-1]);
+    // printf("\nsymbol[%d] is now %d  |  Changed in extradot", nsymb-1, symbol[nsymb-1]);
 }
 
 // Completed by Chris Arnoult | p.99, checked
@@ -224,9 +224,9 @@ void floatstr( char *t ) {
     if (!isdigit(*(t+strlen(t)-1))) {
         fprintf(fpe,e2,line,t);
         nerr++;
-        printf("Incrementing nerr in: floatstr.\n");
+        // printf("Incrementing nerr in: floatstr.\n");
         lsymb = symbol[nsymb++] = 0;
-        printf("\nsymbol[%d] is now %d  |  Changed in floatstr(1)", nsymb-1, symbol[nsymb-1]);
+        // printf("\nsymbol[%d] is now %d  |  Changed in floatstr(1)", nsymb-1, symbol[nsymb-1]);
         return;
     } else {
         x = atold(t);
@@ -234,7 +234,7 @@ void floatstr( char *t ) {
         for (i = 0; i < nrlit; i++) {
             if (x == rlit[i]) {
                 lsymb = symbol[nsymb++] = 200+i;
-                printf("\nsymbol[%d] is now %d  |  Changed in floatstr(2)", nsymb-1, symbol[nsymb-1]);
+                // printf("\nsymbol[%d] is now %d  |  Changed in floatstr(2)", nsymb-1, symbol[nsymb-1]);
                 return;
             }
         }
@@ -245,7 +245,7 @@ void floatstr( char *t ) {
         } else {
             rlit[nrlit++] = x;
             lsymb = symbol[nsymb++] = 199+nrlit;
-            printf("\nsymbol[%d] is now %d  |  Changed in floatstr(3)", nsymb-1, symbol[nsymb-1]);
+            // printf("\nsymbol[%d] is now %d  |  Changed in floatstr(3)", nsymb-1, symbol[nsymb-1]);
         }
     }
 }
@@ -257,6 +257,7 @@ void gencode( void ) {
     
     int l,r;
     
+    // printf("\n>>>> Entering GenCode <<<<");
     switch ( row ) {
         case  0: if ( modes == 1 ) {
             if ( OP2 < 6 ) {
@@ -859,7 +860,7 @@ void gencode( void ) {
 // Completed by Chris Arnoult | p.125, checked
 void getsymbol( void ) {
     void DEBUG_PRINT_SYMBOL_TABLE( void );
-    printf("\n>>>> Entering getsymbol <<<<");
+    // printf("\n>>>> Entering getsymbol <<<<");
     //printf("\nnsymb: %d    isymb: %d", nsymb, isymb);
     
     if (nsymb <= isymb) {
@@ -883,7 +884,7 @@ void getsymbol( void ) {
         }
     }
     //DEBUG_PRINT_SYMBOL_TABLE();
-    printf("\n>>>> Exiting getsymbol <<<<");
+    // printf("\n>>>> Exiting getsymbol <<<<");
 }
 
 //	If string s is new, return -(hash+1)
@@ -896,7 +897,7 @@ void getsymbol( void ) {
 int hash( char *s ) {
     int h,q;
     char *p;
-    printf("\n==== Entering hash function with input: %s ====", s);
+    // printf("\n==== Entering hash function with input: %s ====", s);
     // q = sum of ASCII codes of chars in string s
     for (p = s, q = 0; *p; q = q+(int)*p, p++);
     
@@ -932,16 +933,16 @@ int hash( char *s ) {
 // Completed by Chris Arnoult | p.101, checked
 void illegalch( void ) {
     fprintf(fpe, e1, line, ch);
-    printf("\nch: '%c'", ch);
+    // printf("\nch: '%c'", ch);
     nerr++;
-    printf("\nIncrementing nerr in: illegalch.");
+    // printf("\nIncrementing nerr in: illegalch.");
     lsymb = symbol[nsymb++] = 0;
-    printf("\nsymbol[%d] is now %d  |  Changed in illegalch", nsymb-1, symbol[nsymb-1]);
+    // printf("\nsymbol[%d] is now %d  |  Changed in illegalch", nsymb-1, symbol[nsymb-1]);
 }
 
 // Provided by Professor Jurca
 void initparse( void ) {
-    printf("\n>>>> Entering initparse <<<<");
+    // printf("\n>>>> Entering initparse <<<<");
 	int r;
     
     if ( (fpc = fopen( fcode, "wt" )) == (FILE *)NULL ) {
@@ -963,14 +964,14 @@ void initparse( void ) {
         rbu[r] = (char)0;
     }
     
-    printf("\n>>>> Exiting initparse <<<<");
+    // printf("\n>>>> Exiting initparse <<<<");
 }
 
 // Completed by Nick Rebhun | p.102, checked
 void initscan( void ) {
     int hash( char * );
     int h,i;
-    printf("\n>>>>> Entering initscan <<<<<");
+    // printf("\n>>>>> Entering initscan <<<<<");
     ch = NEWL;
     line = nerr = nilit = nivar = nrlit = nrvar = nsymb = 0;
     hashp = (HASHREC *)malloc( HSIZE * sizeof(HASHREC));
@@ -987,7 +988,7 @@ void initscan( void ) {
         }
         
         ssp1 = ssp + SSIZE;
-        printf("\n\n>>>> Setting up hash table <<<<");
+        // printf("\n\n>>>> Setting up hash table <<<<");
         for (i = 0; i < HSIZE; i++) {
             hashp[i].ptss = (char *)NULL;
             //printf("\nhashp[%d].ptss = %s", i, hashp[i].ptss);
@@ -997,11 +998,11 @@ void initscan( void ) {
             h = -(hash(trw[i]) + 1);
             hashp[h].ptss = trw[i];
             hashp[h].icod = 300 + i;
-            printf("\nAdded trw[%d] (%s) to the hash table", i, trw[i]);
-            printf("\nhashp[%d].ptss = %s\nhashp[%d].icod = %d\n", h, hashp[h].ptss, h, hashp[h].icod);
+            // printf("\nAdded trw[%d] (%s) to the hash table", i, trw[i]);
+            // printf("\nhashp[%d].ptss = %s\nhashp[%d].icod = %d\n", h, hashp[h].ptss, h, hashp[h].icod);
         }
     }
-    printf("\n>>>>> Exiting initscan <<<<<\n");
+    // printf("\n>>>>> Exiting initscan <<<<<\n");
 }
 
 // Completed by Chris Arnoult | p.103, checked
@@ -1014,7 +1015,7 @@ void intstr( char *t ) {
     for (i = 0; i < nilit; i++) {
         if (x == ilit[i]) {
             lsymb = symbol[nsymb++] = 250+i;
-            printf("\nsymbol[%d] is now %d  |  Changed in intstr(1)", nsymb-1, symbol[nsymb-1]);
+            // printf("\nsymbol[%d] is now %d  |  Changed in intstr(1)", nsymb-1, symbol[nsymb-1]);
             return;
         }
     }
@@ -1025,7 +1026,7 @@ void intstr( char *t ) {
     } else {
         ilit[nilit++] = x;
         lsymb = symbol[nsymb++] = 249 + nilit;
-        printf("\nsymbol[%d] is now %d  |  Changed in intstr(2)", nsymb-1, symbol[nsymb-1]);
+        // printf("\nsymbol[%d] is now %d  |  Changed in intstr(2)", nsymb-1, symbol[nsymb-1]);
     }
 }
 
@@ -1037,7 +1038,7 @@ void letterstr( char *t ) {
     
     h = hash(t);
     
-    printf("\nh = %d", h);
+    // printf("\nh = %d", h);
     
     if (0 <= h) {               //old string
         i = hashp[h].icod;
@@ -1061,7 +1062,7 @@ void letterstr( char *t ) {
         }
         
         lsymb = symbol[nsymb++] = i;
-        printf("\nsymbol[%d] is now %d  |  Changed in letterstr(1)", nsymb-1, symbol[nsymb-1]);
+        // printf("\nsymbol[%d] is now %d  |  Changed in letterstr(1)", nsymb-1, symbol[nsymb-1]);
     } else {                    //new string
         if (ssp1 <= ssp+strlen(t)) {
             puts("** out of string space **");
@@ -1079,20 +1080,20 @@ void letterstr( char *t ) {
             if (lrw == 300) {
                 var[nrvar] = hashp[h].ptss;
                 lsymb = symbol[nsymb++] = hashp[h].icod = 100+(nrvar++);
-                printf("\nsymbol[%d] is now %d  |  Changed in letterstr(2)", nsymb-1, symbol[nsymb-1]);
+                // printf("\nsymbol[%d] is now %d  |  Changed in letterstr(2)", nsymb-1, symbol[nsymb-1]);
                 return;
             } else {
                 if (lrw == 301) {
                     var[50+nivar] = hashp[h].ptss;
                     lsymb = symbol[nsymb++] = hashp[h].icod = 150+(nivar++);
-                    printf("\nsymbol[%d] is now %d  |  Changed in letterstr(3)", nsymb-1, symbol[nsymb-1]);
+                    // printf("\nsymbol[%d] is now %d  |  Changed in letterstr(3)", nsymb-1, symbol[nsymb-1]);
                     return;
                 } else {
                     fprintf(fpe, e4, line, t);
                     nerr++;
-                    printf("Incrementing nerr in: letterstr (2).\n");
+                    // printf("Incrementing nerr in: letterstr (2).\n");
                     lsymb = symbol[nsymb++] = hashp[h].icod = 0;
-                    printf("\nsymbol[%d] is now %d  |  Changed in letterstr(4)", nsymb-1, symbol[nsymb-1]);
+                    // printf("\nsymbol[%d] is now %d  |  Changed in letterstr(4)", nsymb-1, symbol[nsymb-1]);
                 }
             }
         }
@@ -1124,7 +1125,7 @@ void match( void ) {
     }
     
     symbol[top] = sigma = newsigma[row]+400;
-    printf("\nsymbol[%d] is now %d  |  Changed in match", top, symbol[top]);
+    // printf("\nsymbol[%d] is now %d  |  Changed in match", top, symbol[top]);
     c1i = newsigma[row]+27;
     
     if (row == 0) {
@@ -1148,7 +1149,7 @@ int nextr( void ) {
     
     if (5 < r) {
         bug = 3;
-        printf("\nBug reported in nextr");
+        // printf("\nBug reported in nextr");
         return(0);
     } else {
         rbu[r] = (char)1;
@@ -1170,19 +1171,20 @@ int nextr( void ) {
 //
 
 // Completed by Chris Arnoult | p.106 - 108, checked
-int nexts( char *s,char *t ) {
-	int ch2,e,st;
+int nexts( char *s, char *t ) {
+	int ch2, e, st;
 	static char *p;
     
     e = st = 0;
     
+    // printf("\n\nch is '%c'", ch);
     if (ch == NEWL) {
-        p = s;
+        p = s;          // initially, this sets 'p' to be 's', since 'ch' inits to NEWL ('\n')
     }
     
     while (1) {
-        ch = *p;
-        ch2 = (((int)ch)<<8)+((int)*(p+1));
+        ch = *p;        // 'ch' is set to the first character in 's' (since 'p' and 's' are the same)
+        ch2 = (((int)ch) << 8) + ((int)*(p+1));     // 'ch2' is 'ch' cast as an int, shifted left 8 bits, then added to an int cast of the next
         
         switch (ch2) {
             case 0x2f2f:
@@ -1201,14 +1203,14 @@ int nexts( char *s,char *t ) {
                 p++;
                 break;
             default:
-                break;
+                ;
         }
         
-        switch ((int)kind[(int)ch & 0x00ff]) {
-            case 0:
+        switch ( (int)kind[ (int)ch & 0x00ff ] ) {        // cast 'ch' to an int and map to 'kind'
+            case 0:         // Terminating character. Note: 'kind' is only 0 at [10] (11th element, i.e. end of line)
                 *t = EOS;
                 return(-st);
-            case 1:
+            case 1:         // Upper-case letter (kind[65 - 90]) or Lower-case letter (kind[97 - 122])
                 if (st == 0) {
                     st = 3;
                 }
@@ -1221,13 +1223,19 @@ int nexts( char *s,char *t ) {
                         st = 4;
                     }
                 }
-            case 2:
+            case 2:         // Number, 0 - 9. kind[48 - 57]
                 if (st == 0) {
                     st = 5;
                 }
                 p++;
                 *t++ = ch;
                 break;
+            /* Case 3:
+             Single-quote, dot/comma, open/close parens, and operators (kind[39 - 47]), or
+             semicolon, less-than, equals-sign (kind[59 - 61]), or
+             open-brace (kind[123]), or 
+             close-brace (kind[125]), or
+             Misc Extended ASCII characters??? (kind[128 - 130]) */
             case 3:
                 if (st == 0) {
                     *t++ = ch;
@@ -1264,7 +1272,7 @@ int nexts( char *s,char *t ) {
                     }
                 }
                 
-            case 4:
+            case 4:     // TAB (kind[9]), or SPACE (kind[32])
                 p++;
                 if (st) {
                     *t = EOS;
@@ -1295,15 +1303,15 @@ void outscan( void ) {
 	int c,i,j,k;
 	char fsym[13];
     
-    printf("\n>>>> Entering outscan <<<<");
+    // printf("\n>>>> Entering outscan <<<<");
     
     fclose( fpe );
     free( (void *)hashp);
     
-    printf("\n*****nerr = %d", nerr);
+    // printf("\n*****nerr = %d", nerr);
     
     if ( nerr ) {
-        printf("\n\n%d error%sdetected in scan\n\n", nerr, (nerr < 2 ? " " : "s "));
+        // printf("\n\n%d error%sdetected in scan\n\n", nerr, (nerr < 2 ? " " : "s "));
         fpe = fopen("$$err$$", "rt");
         
         while ((c = getc( fpe )) != EOF) {
@@ -1384,23 +1392,20 @@ void outscan( void ) {
             puts( "** cannot delete \"$$err$$\" **" );
         }
     }
-    printf("\n>>>> Exiting outscan <<<<");
+    // printf("\n>>>> Exiting outscan <<<<");
 }
 
 // Completed by Nick Rebhun | p.129, checked
 void parse( void ) {
 	void closeout( void ),getsymbol( void ),initparse( void ),
 		reduce( void ),reportbug( void ),shift( void ), DEBUG_PRINT_HASH_TABLE( void );
-    printf("\n>>>> Entering parse <<<<");
+    // printf("\n>>>> Entering parse <<<<");
     initparse();
     getsymbol();
     
     if (alpha != 350) {         // not start with '{'
         bug = 3;
-        printf("\nBug reported in parse");
         reportbug();
-        //printf("\nHashing '{' returns %d", (hash("{")));
-        //DEBUG_PRINT_HASH_TABLE();
         return;
     }
     shift();
@@ -1435,23 +1440,26 @@ void parse( void ) {
         closeout();
     }
     
-    printf("\n>>>> Exiting parse <<<<\n");
+    // printf("\n>>>> Exiting parse <<<<\n");
 }
 
 // Completed by Nick Rebhun | p.130, checked
 void reduce( void ) {
 	int comp( int,int * );
-	void match( void );
+    void match( void ), DEBUG_PRINT_SYMBOL_TABLE();
     
     row = first[c1i];
-    printf("\n>>>> Entering reduce <<<<");
+    // printf("\n>>>> Entering reduce <<<<");
     if (row < 37) {
         while (1) {
-            if ( (bug = comp( top, c2+c2ptr[row] )) < 2 ) {
+            //printf("\ntop = %3d    c2+c2ptr[%3d] = %3d + %3d = %3d", top, row, *c2, c2ptr[row], *c2 + c2ptr[row]);
+            if ( (bug = comp( top, c2 + c2ptr[row] )) < 2 ) {
                 break;
             } else {
                 if (same[++row] != sigma) {
                     bug = 2;
+                    //printf("\n*** same[%d] = %d...", row, same[row]);
+                    //DEBUG_PRINT_SYMBOL_TABLE();
                     break;
                 } else {
                     if ( (row == 16) && (symbol[top-1]!= 403) ) {
@@ -1461,11 +1469,11 @@ void reduce( void ) {
             }
         }
     }
-    printf("\nbug is %d", bug);
+    // printf("\nbug is %d", bug);
     if (bug == 0) {
         match();
     }
-    printf("\n>>>> Exiting reduce <<<<");
+    // printf("\n>>>> Exiting reduce <<<<");
 }
 
 // Completed by Chris Arnoult | p.131, checked
@@ -1507,8 +1515,6 @@ void reportbug( void ) {
             
             ouch((int)NEWL);
         }
-        
-        printf("\n\nmaxtop = %d\n\n",maxtop);
     }
 }
 
@@ -1519,43 +1525,37 @@ void scan( void ) {
 		floatstr( char * ),illegalch( void ),initscan( void ),
 		intstr( char * ),letterstr( char * ),outscan( void ), DEBUG_PRINT_HASH_TABLE( void );
 	int st;
-	char s[MAXL+1],t[MAXL+1];
+	char s[MAXL+1], t[MAXL+1];
     
     initscan();
     //DEBUG_PRINT_HASH_TABLE();
-    printf("\n>>>>> Reading from fps <<<<<");
+    // printf("\n>>>>> Reading from fps <<<<<");
     
     while (fgets(s, MAXL+1, fps) != (char*)NULL) {
         line++;
         lsymb = symbol[nsymb++] = 400+line;
-        printf("\nsymbol[%d] is now %d  |  Changed in scan", nsymb-1, symbol[nsymb-1]);
+        //printf("\nsymbol[%d] is now %d  |  Changed in scan", nsymb-1, symbol[nsymb-1]);
         
         do {
-            if ((st = nexts(s,t)) != 0) {
-                printf("\nst is %d after nexts(%s, %s)", st, s, t);
+            if ((st = nexts(s, t)) != 0) {
+                // printf("\nst is %d after nexts(%s, %s)", st, s, t);
                 switch (0 < st ? st: -st) {
                     case 1:
-                        printf("\n case 1: illegalch");
                         illegalch();
                         break;
                     case 2:
-                        printf("\n case 2: delimiter");
                         delimiter();
                         break;
                     case 3:
-                        printf("\n case 3: letterstr");
                         letterstr(t);
                         break;
                     case 4:
-                        printf("\n case 4: baddigitstr");
                         baddigitstr(t);
                         break;
                     case 5:
-                        printf("\n case 5: intstr(%s)", t);
                         intstr(t);
                         break;
                     case 6:
-                        printf("\n case 6: floatstr");
                         floatstr(t);
                         break;
                     default:
@@ -1565,7 +1565,7 @@ void scan( void ) {
             }
         } while (st < 0);
     }
-    printf("\n>>>>> Finished reading from fps <<<<<");
+    // printf("\n>>>>> Finished reading from fps <<<<<");
     
     if (fclose(fps)) {
         printf("** can't close %s **\n", fname);
@@ -1584,7 +1584,7 @@ void shift( void ) {
    
     sigma = (300 <= alpha ? alpha : 100 * (alpha/100) );
     symbol[top] = sigma;
-    printf("\nsymbol[%d] is now %d  |  Changed in shift", top, symbol[top]);
+    // printf("\nsymbol[%d] is now %d  |  Changed in shift", top, symbol[top]);
     if (300 <= alpha) {
         mode[top] = (char)(aux[top] = 0);
     } else {
