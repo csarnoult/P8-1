@@ -173,8 +173,8 @@
 			   "fld"   ,"fmul" ,"fmulp","fstp"  ,"fstsw\tax",
 			   "fsub"  ,"fsubp","fsubr","fsubrp","fxch"},
 
-        // kind[] maps ASCII characters. Used only in 'nexts()' Note: Extended ASCII not supported in p8
-		kind[131]={
+        // kind[] maps ASCII characters. Used only in 'nexts()' Note: Extended ASCII not supported in p8. kind[128 - 130] are for boolean comparitors
+		kind[132]={
                 5,5,5,5,5,5,5,5,5,4,0,5,5,5,5,5,        // 0 - 15
                 5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,        // 16 - 31
                 4,5,5,5,5,5,5,5,3,3,3,3,3,3,3,3,        // 32 - 47
@@ -182,7 +182,7 @@
                 5,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,        // 64 - 79
                 1,1,1,1,1,1,1,1,1,1,1,5,5,5,5,5,        // 80 - 95
                 5,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,        // 96 - 111
-                1,1,1,1,1,1,1,1,1,1,1,3,5,3,5,5,3,3,3}, // 112 - 130
+                1,1,1,1,1,1,1,1,1,1,1,3,5,3,5,5,3,3,3, 3}, // 112 - 130
 		mode[128],
 		newsigma[54]={16,17, 2,17,17,18,19,10, 5, 9,
 			      11,12, 5, 4,20,20, 4,26,22,15,

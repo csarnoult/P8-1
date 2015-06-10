@@ -5,7 +5,7 @@
  *  Project:    p8
  *
  *  Start Date: 19  May     2015
- *  Last Edit:  04  June    2015
+ *  Last Edit:  09  June    2015
  * ======================================================
  * Project Description:
  * ------------------------------------------------------
@@ -36,9 +36,14 @@ int main( int argc,char **argv ) {
 		puts( "** can't open \"$$err$$\" for writing errors **" );
 		exit( 1 );
 	}
+    printf("\n==== Beginning Tokenization ====\n");
 	scan();
+    printf("\n==== Tokenization Complete ====\n");
+    
 	if ( nerr == 0 ) {
+        printf("\n==== Beginning Parsing ====\n");
 		parse();
+        printf("\n==== Parsing Complete ====\n");
 	}
 	return( 0 );
 }
@@ -914,7 +919,6 @@ int hash( char *s ) {
         //printf("\nhashp[%d].ptss: %s    hashp[%d].icod: %d", h, hashp[h].ptss, h, hashp[h].icod);
         
         if (hashp[h].ptss == (char *)NULL) {
-            //printf("\nReturning -(h+1): %d", (-(h+1)));
             return (-(h+1));
         }
         
@@ -1037,8 +1041,6 @@ void letterstr( char *t ) {
 	char *p;
     
     h = hash(t);
-    
-    // printf("\nh = %d", h);
     
     if (0 <= h) {               //old string
         i = hashp[h].icod;
@@ -1184,9 +1186,9 @@ int nexts( char *s, char *t ) {
     
     while (1) {
         ch = *p;        // 'ch' is set to the first character in 's' (since 'p' and 's' are the same)
-        ch2 = (((int)ch) << 8) + ((int)*(p+1));     // 'ch2' is 'ch' cast as an int, shifted left 8 bits, then added to an int cast of the next
+        ch2 = (((int)ch) << 8) + ((int)*(p+1));     // 'ch2' is 'ch' cast as an int, shifted left 8 bits, then added to an int cast of the character immdiately following 'ch' (p + 1)
         
-        switch (ch2) {
+        switch (ch2) {              // Assign 'ch' based on 'ch2'
             case 0x2f2f:
                 ch = NEWL;          // "//"
                 break;
@@ -1198,6 +1200,10 @@ int nexts( char *s, char *t ) {
                 ch = (char)129;     // "=="
                 p++;
                 break;
+            case 0x3e3d:
+                ch = (char)131;     // ">=" Case added by Nick, June 9
+                p++;
+                break;
             case 0x213d:
                 ch = (char)130;     // "!="
                 p++;
@@ -1206,11 +1212,14 @@ int nexts( char *s, char *t ) {
                 ;
         }
         
-        switch ( (int)kind[ (int)ch & 0x00ff ] ) {        // cast 'ch' to an int and map to 'kind'
-            case 0:         // Terminating character. Note: 'kind' is only 0 at [10] (11th element, i.e. end of line)
-                *t = EOS;
-                return(-st);
-            case 1:         // Upper-case letter (kind[65 - 90]) or Lower-case letter (kind[97 - 122])
+        printf("\n** ch: '%c' (%d)    |     kind[%d] = %d", ch, (int)ch, (int)ch, kind[(int)ch]);
+        
+        switch ( (int)kind[ (int)ch & 0x00ff ] ) {        // cast 'ch' to an int and map to 'kind' ( 'ch & 255' is a red-herring)
+            case 0:             // Terminating character. Note: 'kind' is only 0 at [10] (11th element, i.e. end of line)
+                *t = EOS;       // set char pointed to by t, to: '\0'
+                return(-st);    // return to scan()
+                
+            case 1:             // Upper-case letter (kind[65 - 90]) or Lower-case letter (kind[97 - 122])
                 if (st == 0) {
                     st = 3;
                 }
@@ -1222,24 +1231,29 @@ int nexts( char *s, char *t ) {
                     if (4 < st) {
                         st = 4;
                     }
-                }
-            case 2:         // Number, 0 - 9. kind[48 - 57]
+                }               // Note: no break
+                
+            case 2:             // Number, 0 - 9 (kind[48 - 57])
                 if (st == 0) {
                     st = 5;
                 }
                 p++;
                 *t++ = ch;
+                printf("\nt: %d = %c", t, ch);
                 break;
-            /* Case 3:
-             Single-quote, dot/comma, open/close parens, and operators (kind[39 - 47]), or
-             semicolon, less-than, equals-sign (kind[59 - 61]), or
-             open-brace (kind[123]), or 
-             close-brace (kind[125]), or
-             Misc Extended ASCII characters??? (kind[128 - 130]) */
+                
+            /* Case 3:  (valid/used symbols)
+             * dot/comma, open/close parens, and operators (kind[40 - 47]), or
+             * semicolon, less-than, equals-sign (kind[59 - 61]), or
+             * open-brace (kind[123]), or
+             * close-brace (kind[125]), or
+             * Comparison Operators, SET IN PREVIOUS SWITCH-CASE BLOCK (kind[128 - 130])
+             */
             case 3:
-                if (st == 0) {
-                    *t++ = ch;
-                    p++;
+                if (st == 0) {      // if 'st' has been changed...
+                    *t++ = ch;      // point 't' to next char, and set that to 'ch'
+                    p++;            // point "p" to next char
+                    
                     if((ch == '-') && isdigit(*p) && ((lsymb = 303) || (lsymb = 352) || (lsymb == 354) || ((358 < lsymb) && (lsymb < 364)))) {
                         st = 5;
                         break;
@@ -1247,7 +1261,7 @@ int nexts( char *s, char *t ) {
                         *t = EOS;
                         return(2);
                     }
-                } else {
+                } else {            // otherwise, if 'st' is something other than 0
                     if (st == 3) {
                         *t = EOS;
                         return(3);
@@ -1266,13 +1280,13 @@ int nexts( char *s, char *t ) {
                                 break;
                             } else {
                                 *t = EOS;
-                                return(st);
+                                return (st);
                             }
                         }
                     }
                 }
                 
-            case 4:     // TAB (kind[9]), or SPACE (kind[32])
+            case 4:         // TAB (kind[9]), or SPACE (kind[32])
                 p++;
                 if (st) {
                     *t = EOS;
@@ -1280,6 +1294,16 @@ int nexts( char *s, char *t ) {
                 } else {
                     break;
                 }
+            /* Case 5:  (unused/invalid symbols?)
+             * NULL, SOH, STX, ETX, EOT, ENQ, BEL, BACKSPACE (kind[0 - 8])
+             * Miscellaneous ASCII (kind[11 - 31])
+             * '!', '"', '#', '$', '%', '&', ''' (kind[33 - 39])
+             * ':' (kind[58])
+             * '>', '?', '@' (kind[62 - 64])
+             * '[', '\', ']', '^', '_', '`' (kind[91 - 96])
+             * '|' (kind[124])
+             * '~', DEL (kind[126 - 127])
+             */
             case 5:
                 if (st == 0) {
                     p++;
@@ -1516,6 +1540,8 @@ void reportbug( void ) {
             ouch((int)NEWL);
         }
     }
+    
+    printf("\n\nmaxtop = %d\n\n", maxtop);
 }
 
 // Completed by Chris Arnoult | p.112 checked
@@ -1523,7 +1549,7 @@ void scan( void ) {
 	int nexts( char *,char * );
 	void baddigitstr( char * ),delimiter( void ),extradot( int,char * ),
 		floatstr( char * ),illegalch( void ),initscan( void ),
-		intstr( char * ),letterstr( char * ),outscan( void ), DEBUG_PRINT_HASH_TABLE( void );
+		intstr( char * ),letterstr( char * ),outscan( void ), DEBUG_PRINT_HASH_TABLE( void ), DEBUG_PRINT_CHAR_ARRAY(char *);
 	int st;
 	char s[MAXL+1], t[MAXL+1];
     
@@ -1535,7 +1561,7 @@ void scan( void ) {
         line++;
         lsymb = symbol[nsymb++] = 400+line;
         //printf("\nsymbol[%d] is now %d  |  Changed in scan", nsymb-1, symbol[nsymb-1]);
-        
+        printf("\n\n* LINE %4d\n", line);
         do {
             if ((st = nexts(s, t)) != 0) {
                 // printf("\nst is %d after nexts(%s, %s)", st, s, t);
@@ -1561,9 +1587,11 @@ void scan( void ) {
                     default:
                         extradot(st-5,t);
                 }
+                
                 //printf("\ns: %s     t: %s     st: %d    line: %d     lsymb: %d     symbol: %d", s, t, st, line, lsymb, symbol[nsymb]);
             }
-        } while (st < 0);
+            
+        } while (0 < st);
     }
     // printf("\n>>>>> Finished reading from fps <<<<<");
     
