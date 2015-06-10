@@ -928,7 +928,7 @@ void getsymbol( void ) {
 int hash( char *s ) {
     int h,q;
     char *p;
-    // printf("\n==== Entering hash function with input: %s ====", s);
+    //printf("\n==== Entering hash function with input: %s ====", s);
     // q = sum of ASCII codes of chars in string s
     for (p = s, q = 0; *p; q = q+(int)*p, p++);
     
