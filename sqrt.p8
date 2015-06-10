@@ -18,7 +18,6 @@
 //    I.e., s/2 is a very good approximation of r, the relative error.
 //    Moreover we can actually compute s/2; whereas to compute r we must
 //    actually have the exact sqrt(a), which of course we do not have.
-//
 {
     float a,m,p,x,y,z;
     int r;                    // 1 iff 0 < a < 1

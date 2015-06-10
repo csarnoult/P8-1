@@ -172,7 +172,7 @@ int comp( int s,int *p ) {
 // Completed by Chris Arnoult | p.97, checked
 void delimiter( void ) {
     lsymb = symbol[nsymb++] = 350+(int)delim[(int)ch & 0x00ff];
-    // printf("\nsymbol[%d] is now %d  |  Changed in delimiter", nsymb-1, symbol[nsymb-1]);
+    //printf("\nsymbol[%d] is now %d  |  Changed in delimiter", nsymb-1, symbol[nsymb-1]);
     if (ch == ';') {
         lrw = 0;
     }
@@ -900,16 +900,17 @@ void getsymbol( void ) {
 //				       else hash = y.
 
 // Completed by Nick Rebhun | p.100, checked
-int hash( char *s ) {
+int hash( char *t ) {
+    void DEBUG_PRINT_HASH_TABLE();
     int h,q;
     char *p;
     //printf("\n==== Entering hash function with input: %s ====", s);
     // q = sum of ASCII codes of chars in string s
-    for (p = s, q = 0; *p; q = q+(int)*p, p++);
+    for (p = t, q = 0; *p; q = q+(int)*p, p++);
     
     //printf("\nq: %d (sum of ASCII codes of chars in string '%s')", q, s);
     h = (q % HSIZE) - 1;        // h is index into hash table
-    
+    //DEBUG_PRINT_HASH_TABLE();
     //printf("   h: %d", h);
     for (q = 0; ;) {            // q counts "collisions" now
         
@@ -923,7 +924,7 @@ int hash( char *s ) {
             return (-(h+1));
         }
         
-        if ( strcmp(s, hashp[h].ptss) == 0) {
+        if ( strcmp(t, hashp[h].ptss) == 0) {
             //printf("\nReturning h: %d", h);
             return h;
         }
@@ -1046,7 +1047,6 @@ void letterstr( char *t ) {
     if (0 <= h) {               //old string
         i = hashp[h].icod;
         
-        
         if (i == 0) {
             //printf("\n>>>>> printing on fpe");
             fprintf(fpe, e4, line, t);
@@ -1078,7 +1078,7 @@ void letterstr( char *t ) {
             p = t;
             
             //copy to sspace
-            while ((*ssp++ = *p++) != EOS) {}
+            while ((*ssp++ = *p++) != EOS);
             
             if (lrw == 300) {
                 var[nrvar] = hashp[h].ptss;
@@ -1250,7 +1250,7 @@ int nexts( char *s, char *t ) {
                  * Comparison Operators, SET IN PREVIOUS SWITCH-CASE BLOCK (kind[128 - 130])
                  */
             case 3:
-                if (st == 0) {      // if 'st' has been changed...
+                if (st == 0) {      // if 'st' has not been changed...
                     *t++ = ch;      // dereference, assign, and increment
                     p++;            // point 'p' to next char
                     
@@ -1294,6 +1294,7 @@ int nexts( char *s, char *t ) {
                 } else {
                     break;
                 }
+                
                 /* Case 5:  (unused/invalid symbols?)
                  * NULL, SOH, STX, ETX, EOT, ENQ, BEL, BACKSPACE (kind[0 - 8])
                  * Miscellaneous ASCII (kind[11 - 31])
@@ -1562,6 +1563,7 @@ void scan( void ) {
         lsymb = symbol[nsymb++] = 400+line;
         //printf("\nsymbol[%d] is now %d  |  Changed in scan", nsymb-1, symbol[nsymb-1]);
         printf("\n\n* LINE %4d\n", line);
+        printf("\nString being handled:\n%s\n\n", s);
         do {
             if ((st = nexts(s, t)) != 0) {
                 // printf("\nst is %d after nexts(%s, %s)", st, s, t);
