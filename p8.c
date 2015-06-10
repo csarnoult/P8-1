@@ -14,38 +14,38 @@
 #include "p8.h"
 
 int main( int argc,char **argv ) {
-	void parse( void ),scan( void );
+    void parse( void ),scan( void );
     
-	if ( (argc < 2) || (3 < argc) ) {
-		puts( "** use is >p8 [-y] sourcefilename **" );
-		exit( 1 );
-	}
-	if ( argc == 3 ) {
-		if ( strcmp( *++argv,"-y" ) == 0 ) {
-			sopt = 1;
-		} else {
-			printf( "** illegal option: [%s] **\n",*argv );
-			exit( 1 );
-		}
-	}
-	if ( (fps = fopen( fname = *++argv,"rt" )) == (FILE *)NULL ) {
-		printf( "** can't open %s **\n",fname );
-		exit( 1 );
-	}
-	if ( (fpe = fopen( "$$err$$","wt" )) == (FILE *)NULL ) {
-		puts( "** can't open \"$$err$$\" for writing errors **" );
-		exit( 1 );
-	}
+    if ( (argc < 2) || (3 < argc) ) {
+        puts( "** use is >p8 [-y] sourcefilename **" );
+        exit( 1 );
+    }
+    if ( argc == 3 ) {
+        if ( strcmp( *++argv,"-y" ) == 0 ) {
+            sopt = 1;
+        } else {
+            printf( "** illegal option: [%s] **\n",*argv );
+            exit( 1 );
+        }
+    }
+    if ( (fps = fopen( fname = *++argv,"rt" )) == (FILE *)NULL ) {
+        printf( "** can't open %s **\n",fname );
+        exit( 1 );
+    }
+    if ( (fpe = fopen( "$$err$$","wt" )) == (FILE *)NULL ) {
+        puts( "** can't open \"$$err$$\" for writing errors **" );
+        exit( 1 );
+    }
     printf("\n==== Beginning Tokenization ====\n");
-	scan();
+    scan();
     printf("\n==== Tokenization Complete ====\n");
     
-	if ( nerr == 0 ) {
+    if ( nerr == 0 ) {
         printf("\n==== Beginning Parsing ====\n");
-		parse();
+        parse();
         printf("\n==== Parsing Complete ====\n");
-	}
-	return( 0 );
+    }
+    return( 0 );
 }
 
 // Completed by Nick Rebhun | p.95, checked
@@ -97,10 +97,10 @@ void baddigitstr( char *t ) {
 
 // Completed by Nick Rebhun | p.121 - 122
 void closeout( void ) {
-	void makename( char *,char *,char * );
-
-	int i;
-	char fasm[13];
+    void makename( char *,char *,char * );
+    
+    int i;
+    char fasm[13];
     
     fputs( "\tret\n_main\tendp\ntext\tends\n_data\tsegment\tword public 'data'\n", fpc );
     
@@ -146,7 +146,7 @@ void closeout( void ) {
     }
     
     makename( fname, "asm", fasm);
-
+    
     if (fopen( fasm, "rt" ) != (FILE *)NULL) {
         unlink(fasm);
     }
@@ -196,14 +196,14 @@ void emit1( int i ) {
 }
 
 void emit2( int i, int j ) {
-	void emit0( int );
+    void emit0( int );
     fprintf( fpc, "\t%s\t", inst[i] );
     emit0(j);
     fputs( "\n", fpc );
 }
 
 void emit3( int i, int j, int k ) {
-	void emit0( int );
+    void emit0( int );
     fprintf( fpc, "\t%s\t", inst[i] );
     emit0(j);
     fputs( ",", fpc );
@@ -222,9 +222,9 @@ void extradot( int d,char *t ) {
 
 // Completed by Chris Arnoult | p.99, checked
 void floatstr( char *t ) {
-	long double atold( char * );
-	double x;
-	int i;
+    long double atold( char * );
+    double x;
+    int i;
     
     if (!isdigit(*(t+strlen(t)-1))) {
         fprintf(fpe,e2,line,t);
@@ -733,7 +733,7 @@ void gencode( void ) {
                             emit3( 14,3,0 );
                             emit2( 16,0 );
                             break;
-                        case 4: 
+                        case 4:
                         case 5: emit2( 17,0 );
                             emit2( 17,3 );
                             emit3(14,0,OP0);
@@ -770,7 +770,7 @@ void gencode( void ) {
                             emit2( 16,0 );
                             OP0 = 3;
                             break;
-                        case 4: 
+                        case 4:
                         case 5: emit2( 17,0 );
                             emit2( 17,3 );
                             emit3(14,0,OP0);
@@ -863,25 +863,6 @@ void gencode( void ) {
 }
 
 // Completed by Chris Arnoult | p.125, checked
-<<<<<<< HEAD
-void getsymbol( void )
-{
-    if(nsymb <= isymb)
-    {
-        eos++;
-    }
-    else
-    {
-        do {
-            if(nsymb <= ++isymb)
-            {
-                eos++;
-            }
-            else
-            {
-                if(400 < (alpha = symbol[isymb]))
-                {
-=======
 void getsymbol( void ) {
     void DEBUG_PRINT_SYMBOL_TABLE( void );
     // printf("\n>>>> Entering getsymbol <<<<");
@@ -896,22 +877,16 @@ void getsymbol( void ) {
             } else {
                 //printf("\nsymbol[%d] = %d", isymb, symbol[isymb]);
                 if (400 < (alpha = symbol[isymb])) {
->>>>>>> b818c64a6ae073b1489f5a6f515fbe828a0cdbb5
                     line = alpha-400;
                 }
                 
             }
-<<<<<<< HEAD
-        } while ((400 < alpha) && !eos);
-        if (!eos){
-        c1j = (alpha < 300 ? alpha/100-1 : alpha-(alpha < 310 ? 298 : 338));
-=======
             //printf("\nalpha is %d    line is %d    nsymb is %d    isymb is %d    eos is %d", alpha, line, nsymb, isymb, eos);
         } while ((400 < alpha) && !eos);
         
         if (!eos) {
             c1j = (alpha < 300 ? alpha/100-1 : alpha-(alpha < 310 ? 298 : 338));
->>>>>>> b818c64a6ae073b1489f5a6f515fbe828a0cdbb5
+            
         }
     }
     //DEBUG_PRINT_SYMBOL_TABLE();
@@ -973,7 +948,7 @@ void illegalch( void ) {
 // Provided by Professor Jurca
 void initparse( void ) {
     // printf("\n>>>> Entering initparse <<<<");
-	int r;
+    int r;
     
     if ( (fpc = fopen( fcode, "wt" )) == (FILE *)NULL ) {
         printf( "** can't close %s **\n", fcode);
@@ -1037,9 +1012,9 @@ void initscan( void ) {
 
 // Completed by Chris Arnoult | p.103, checked
 void intstr( char *t ) {
-	long atol(const char * );
-	long x;
-	int i;
+    long atol(const char * );
+    long x;
+    int i;
     
     x = atol(t);
     for (i = 0; i < nilit; i++) {
@@ -1062,9 +1037,9 @@ void intstr( char *t ) {
 
 // Completed by Chris Arnoult | p.104, checked
 void letterstr( char *t ) {
-	int hash( char * );
-	int h,i;
-	char *p;
+    int hash( char * );
+    int h,i;
+    char *p;
     
     h = hash(t);
     
@@ -1141,12 +1116,12 @@ void makename( char *p,char *q,char *r ) {
         *r++ = *q++;
     }
     
-    *r = EOS;    
+    *r = EOS;
 }
 
 // Completed by Chris Arnoult | p.127 checked
 void match( void ) {
-	void gencode( void );
+    void gencode( void );
     
     if (row < 37) {
         top -= subtop[row];
@@ -1172,7 +1147,7 @@ void match( void ) {
 
 // Completed by Chris Arnoult | p.128 checked
 int nextr( void ) {
-	int r;
+    int r;
     for (r = 0; rbu[r]; r++);
     
     if (5 < r) {
@@ -1200,8 +1175,8 @@ int nextr( void ) {
 
 // Completed by Chris Arnoult | p.106 - 108, checked
 int nexts( char *s, char *t ) {
-	int ch2, e, st;
-	static char *p;
+    int ch2, e, st;
+    static char *p;
     
     e = st = 0;
     
@@ -1267,13 +1242,13 @@ int nexts( char *s, char *t ) {
                 *t++ = ch;      // dereference, assign, and increment
                 break;
                 
-            /* Case 3:  (valid/used symbols)
-             * dot/comma, open/close parens, and operators (kind[40 - 47]), or
-             * semicolon, less-than, equals-sign (kind[59 - 61]), or
-             * open-brace (kind[123]), or
-             * close-brace (kind[125]), or
-             * Comparison Operators, SET IN PREVIOUS SWITCH-CASE BLOCK (kind[128 - 130])
-             */
+                /* Case 3:  (valid/used symbols)
+                 * dot/comma, open/close parens, and operators (kind[40 - 47]), or
+                 * semicolon, less-than, equals-sign (kind[59 - 61]), or
+                 * open-brace (kind[123]), or
+                 * close-brace (kind[125]), or
+                 * Comparison Operators, SET IN PREVIOUS SWITCH-CASE BLOCK (kind[128 - 130])
+                 */
             case 3:
                 if (st == 0) {      // if 'st' has been changed...
                     *t++ = ch;      // dereference, assign, and increment
@@ -1319,16 +1294,16 @@ int nexts( char *s, char *t ) {
                 } else {
                     break;
                 }
-            /* Case 5:  (unused/invalid symbols?)
-             * NULL, SOH, STX, ETX, EOT, ENQ, BEL, BACKSPACE (kind[0 - 8])
-             * Miscellaneous ASCII (kind[11 - 31])
-             * '!', '"', '#', '$', '%', '&', ''' (kind[33 - 39])
-             * ':' (kind[58])
-             * '>', '?', '@' (kind[62 - 64])
-             * '[', '\', ']', '^', '_', '`' (kind[91 - 96])
-             * '|' (kind[124])
-             * '~', DEL (kind[126 - 127])
-             */
+                /* Case 5:  (unused/invalid symbols?)
+                 * NULL, SOH, STX, ETX, EOT, ENQ, BEL, BACKSPACE (kind[0 - 8])
+                 * Miscellaneous ASCII (kind[11 - 31])
+                 * '!', '"', '#', '$', '%', '&', ''' (kind[33 - 39])
+                 * ':' (kind[58])
+                 * '>', '?', '@' (kind[62 - 64])
+                 * '[', '\', ']', '^', '_', '`' (kind[91 - 96])
+                 * '|' (kind[124])
+                 * '~', DEL (kind[126 - 127])
+                 */
             case 5:
                 if (st == 0) {
                     p++;
@@ -1342,15 +1317,15 @@ int nexts( char *s, char *t ) {
 }
 
 void ouch( int c ) {
-	putchar( c );
+    putchar( c );
 }
 
 // Completed by Nick Rebhun | p.109 - 111, checked
 void outscan( void ) {
-	void makename( char *,char *,char * ),ouch( int );
-
-	int c,i,j,k;
-	char fsym[13];
+    void makename( char *,char *,char * ),ouch( int );
+    
+    int c,i,j,k;
+    char fsym[13];
     
     // printf("\n>>>> Entering outscan <<<<");
     
@@ -1446,8 +1421,8 @@ void outscan( void ) {
 
 // Completed by Nick Rebhun | p.129, checked
 void parse( void ) {
-	void closeout( void ),getsymbol( void ),initparse( void ),
-		reduce( void ),reportbug( void ),shift( void ), DEBUG_PRINT_HASH_TABLE( void );
+    void closeout( void ),getsymbol( void ),initparse( void ),
+    reduce( void ),reportbug( void ),shift( void ), DEBUG_PRINT_HASH_TABLE( void );
     // printf("\n>>>> Entering parse <<<<");
     initparse();
     getsymbol();
@@ -1473,7 +1448,7 @@ void parse( void ) {
                     shift();
                     getsymbol();
                     break;
-                
+                    
                 case 1:
                     reduce();
                     break;
@@ -1494,7 +1469,7 @@ void parse( void ) {
 
 // Completed by Nick Rebhun | p.130, checked
 void reduce( void ) {
-	int comp( int,int * );
+    int comp( int,int * );
     void match( void ), DEBUG_PRINT_SYMBOL_TABLE();
     
     row = first[c1i];
@@ -1527,8 +1502,8 @@ void reduce( void ) {
 
 // Completed by Chris Arnoult | p.131, checked
 void reportbug( void ) {
-	void ouch( int );
-	int i,j,k;
+    void ouch( int );
+    int i,j,k;
     
     fclose(fpe);
     unlink(fcode);
@@ -1571,12 +1546,12 @@ void reportbug( void ) {
 
 // Completed by Chris Arnoult | p.112 checked
 void scan( void ) {
-	int nexts( char *,char * );
-	void baddigitstr( char * ),delimiter( void ),extradot( int,char * ),
-		floatstr( char * ),illegalch( void ),initscan( void ),
-		intstr( char * ),letterstr( char * ),outscan( void ), DEBUG_PRINT_HASH_TABLE( void ), DEBUG_PRINT_CHAR_ARRAY(char *);
-	int st;
-	char s[MAXL+1], t[MAXL+1];
+    int nexts( char *,char * );
+    void baddigitstr( char * ),delimiter( void ),extradot( int,char * ),
+    floatstr( char * ),illegalch( void ),initscan( void ),
+    intstr( char * ),letterstr( char * ),outscan( void ), DEBUG_PRINT_HASH_TABLE( void ), DEBUG_PRINT_CHAR_ARRAY(char *);
+    int st;
+    char s[MAXL+1], t[MAXL+1];
     
     initscan();
     //DEBUG_PRINT_HASH_TABLE();
@@ -1634,7 +1609,7 @@ void shift( void ) {
     if (maxtop < ++top) {
         maxtop = top;
     }
-   
+    
     sigma = (300 <= alpha ? alpha : 100 * (alpha/100) );
     symbol[top] = sigma;
     // printf("\nsymbol[%d] is now %d  |  Changed in shift", top, symbol[top]);
@@ -1656,7 +1631,7 @@ void shift( void ) {
 
 // Completed by Nick Rebhun | p.113, checked
 long double tento( int n ) {
-	long double y,z;
+    long double y,z;
     
     if (n < 0) {
         return (long double) 1 / tento(-n);
