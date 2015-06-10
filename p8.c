@@ -1221,7 +1221,7 @@ int nexts( char *s, char *t ) {
                 
             case 1:             // Upper-case letter (kind[65 - 90]) or Lower-case letter (kind[97 - 122])
                 if (st == 0) {
-                    st = 3;
+                    st = 3;     // If 'st' has not yet been changed, set it to 3
                 }
                 
                 if (((ch == 'e') || (ch == 'E')) && ((st == 5) || (st == 6)) && (e = 0)) {
@@ -1237,9 +1237,8 @@ int nexts( char *s, char *t ) {
                 if (st == 0) {
                     st = 5;
                 }
-                p++;
-                *t++ = ch;
-                printf("\nt: %d = %c", t, ch);
+                p++;            // move 'p' to next char in 's'
+                *t++ = ch;      // dereference, assign, and increment
                 break;
                 
             /* Case 3:  (valid/used symbols)
@@ -1251,8 +1250,8 @@ int nexts( char *s, char *t ) {
              */
             case 3:
                 if (st == 0) {      // if 'st' has been changed...
-                    *t++ = ch;      // point 't' to next char, and set that to 'ch'
-                    p++;            // point "p" to next char
+                    *t++ = ch;      // dereference, assign, and increment
+                    p++;            // point 'p' to next char
                     
                     if((ch == '-') && isdigit(*p) && ((lsymb = 303) || (lsymb = 352) || (lsymb == 354) || ((358 < lsymb) && (lsymb < 364)))) {
                         st = 5;
@@ -1262,9 +1261,9 @@ int nexts( char *s, char *t ) {
                         return(2);
                     }
                 } else {            // otherwise, if 'st' is something other than 0
-                    if (st == 3) {
-                        *t = EOS;
-                        return(3);
+                    if (st == 3) {  // if we are currently working with a letterstring
+                        *t = EOS;   // dereference and assign terminating character
+                        return(3);  // return 3
                     } else {
                         if (ch == '-' && ((*(t-1)=='e') || (*(t-1) == 'E'))) {
                             p++;
