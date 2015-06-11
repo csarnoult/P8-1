@@ -36,14 +36,14 @@ int main( int argc,char **argv ) {
         puts( "** can't open \"$$err$$\" for writing errors **" );
         exit( 1 );
     }
-    printf("\n==== Beginning Tokenization ====\n");
+    //printf("\n==== Beginning Tokenization ====\n");
     scan();
-    printf("\n==== Tokenization Complete ====\n");
+    //printf("\n==== Tokenization Complete ====\n");
     
     if ( nerr == 0 ) {
-        printf("\n==== Beginning Parsing ====\n");
+        //printf("\n==== Beginning Parsing ====\n");
         parse();
-        printf("\n==== Parsing Complete ====\n");
+        //printf("\n==== Parsing Complete ====\n");
     }
     return( 0 );
 }
@@ -1213,7 +1213,7 @@ int nexts( char *s, char *t ) {
                 ;
         }
         
-        printf("\n** ch: '%c' (%d)    |     kind[%d] = %d", ch, (int)ch, (int)ch, kind[(int)ch]);
+        //printf("\n** ch: '%c' (%d)    |     kind[%d] = %d", ch, (int)ch, (int)ch, kind[(int)ch]);
         
         switch ( (int)kind[ (int)ch & 0x00ff ] ) {        // cast 'ch' to an int and map to 'kind' ( 'ch & 255' is a red-herring)
             case 0:             // Terminating character. Note: 'kind' is only 0 at [10] (11th element, i.e. end of line)
@@ -1562,8 +1562,8 @@ void scan( void ) {
         line++;
         lsymb = symbol[nsymb++] = 400+line;
         //printf("\nsymbol[%d] is now %d  |  Changed in scan", nsymb-1, symbol[nsymb-1]);
-        printf("\n\n* LINE %4d\n", line);
-        printf("\nString being handled:\n%s\n\n", s);
+        //printf("\n\n* LINE %4d\n", line);
+        //printf("\nString being handled:\n%s\n\n", s);
         do {
             if ((st = nexts(s, t)) != 0) {
                 // printf("\nst is %d after nexts(%s, %s)", st, s, t);

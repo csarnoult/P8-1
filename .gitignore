@@ -1,1 +1,5 @@
-p8.out
+*.out
+*.sym
+*.asm
+
+.DS_Store
